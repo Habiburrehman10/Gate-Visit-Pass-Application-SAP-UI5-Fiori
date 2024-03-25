@@ -1,0 +1,17 @@
+<core:FragmentDefinition xmlns="sap.m" 
+xmlns:core="sap.ui.core" 
+xmlns:html="http://www.w3.org/1999/xhtml"
+>
+    <Dialog xmlns="sap.m" title="Image Capture" showHeader="true" draggable="true" stretch="false">
+    <customHeader>
+        <Toolbar >
+            <ToolbarSpacer/>
+            <Button icon="sap-icon://decline" press="onClose" tooltip="Close" />
+        </Toolbar>
+    </customHeader>
+    <VBox alignItems="Center">
+        <html:video id="videoFeed" autoplay="true" width="640" height="465"></html:video>
+        <Button text="Capture Picture" press="capturePicture" icon="sap-icon://camera"/>
+    </VBox>
+</Dialog>
+</core:FragmentDefinition>

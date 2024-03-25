@@ -1,0 +1,90 @@
+/* Enter your custom styles here */
+
+div#__container1--Grid-wrapperfor-__xmlview0--RB4-1 {
+    width: 15%;
+}
+
+div#__container1--Grid-wrapperfor-__xmlview0--RB4-2 {
+    width: 15%;
+}
+
+Grid-wrapperfor-__button2 {
+    width: 10%;
+}
+
+.align-right {
+    position:absolute;
+    right :12px;
+    margin-top: 0px; /* Adjust this value as needed to align checkboxes properly */
+}
+
+.align-right1 {
+    position:absolute;
+    right :8px;
+    margin-top: 0px; /* Adjust this value as needed to align checkboxes properly */
+}
+
+.backgroundPage {
+    background-image: url('../Images/TM.png'); /* Set the path to your background image */
+    background-size: 100%;
+   
+    
+}
+
+.centeredVerticalLayout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 58vh; /* Adjust the height if needed */
+}
+
+.customHeader {
+    text-align: center; /* Center-align the text */
+    font-size: 30px; /* Adjust the font size as needed */
+    font-weight: bold; /* Make the text bold */
+    margin-bottom: 20px; /* Add margin to separate the header from the buttons */
+    /* left : 30%; */
+    color: white;
+    width: 100%; /* Ensure the heading uses the full container width */
+    display: block;
+}
+
+@media (max-width: 600px) {
+    .customHeader {
+        font-size: 24px; /* Smaller font size for mobile */
+        margin-bottom: 10px; /* Less margin to save space */
+        /* Remove or adjust any positioning that might interfere with mobile views */
+    }
+}
+
+.customButton {
+    width: 200px !important; /* Adjust the width as needed */
+    height: 40px !important; /* Adjust the height as needed */
+    margin: 5px !important; /* Adjust the margin as needed */
+    font-size: 16px !important; /* Adjust the font size as needed */
+    border-radius: 15px !important; /* Adjust the border radius as needed */
+    background-color: #0e61b9 !important; /* Change the background color as needed */
+    color: #ffffff !important; /* Change the text color as needed */
+    border: none !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease !important; /* Smooth transition for background color */
+    font-weight: bold;
+}
+
+.customButton:hover {
+    background-color: #70a504 !important; /* Change the background color on hover as needed */
+}
+
+.imageWithBorder {
+    border: 2px solid rgb(69, 69, 110);
+}
+
+.customVBox2 {
+    margin-top: -50px !important;
+}
+
+
+
+
+
+    

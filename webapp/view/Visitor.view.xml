@@ -1,0 +1,455 @@
+<mvc:View
+    controllerName="gatepass.gatepass.controller.Visitor"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+>
+    <Page
+        id="page"
+        title="{i18n>titleVisitor}"
+    >
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Image
+                        id="VisitImage"
+                        src=""
+                        height="30px"
+                        width="30px"
+                    />
+                    <Title text="      " />
+                    <Title text="Visitor Acess Pass" />
+                </contentLeft>
+            </Bar>
+        </customHeader>
+
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <f:Form
+                    id="FormToolbar"
+                    editable="true"
+                    ariaLabelledBy="Title1"
+                >
+                    <f:toolbar>
+                        <Toolbar id="TB1">
+                            <Title
+                                id="Title1"
+                                text="Visitor Pass Selection"
+                            />
+                            <ToolbarSpacer />
+
+                            <Button
+                                id="manualTracking"
+                                icon="sap-icon://detail-view"
+                                press="manualTracking"
+                                text="Manual Tracking"
+                                enabled="true"
+                            />
+
+                            <Button
+                                id="camera"
+                                icon="sap-icon://camera"
+                                press="onOpenCamera"
+                            />
+
+                            <Button
+                                id="delete"
+                                icon="sap-icon://delete"
+                                press="deleteData"
+                                enabled="false"
+                            />
+                            <Button
+                                id="save"
+                                icon="sap-icon://save"
+                                press="updateData"
+                                enabled="false"
+                            />
+                            <Button
+                                id="create"
+                                icon="sap-icon://create"
+                                press="onCreate"
+                            />
+                        </Toolbar>
+                    </f:toolbar>
+                    <f:layout>
+                        <f:ResponsiveGridLayout
+                            labelSpanXL="4"
+                            labelSpanL="3"
+                            labelSpanM="4"
+                            labelSpanS="12"
+                            adjustLabelSpan="false"
+                            emptySpanXL="0"
+                            emptySpanL="0"
+                            emptySpanM="0"
+                            emptySpanS="0"
+                            columnsXL="2"
+                            columnsL="1"
+                            columnsM="1"
+                            singleContainerFullSize="false"
+                        />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer ariaLabelledBy="Title2">
+                            <f:formElements>
+                                <f:FormElement>
+                                    <f:fields>
+                                        <Text
+                                            id="RB4-1"
+                                            text="Search VisitPass"
+                                            class=""
+                                        />
+
+                                        <Input
+                                            placeholder="Visitor Pass Number"
+                                            id="visitpassNum"
+                                            value="{gpData>/VISITOR_NO}"
+                                            showSuggestion="true"
+                                            showValueHelp="true"
+                                            valueHelpRequest="visitPassFragment"
+                                            suggestionItems="{path: 'F4data>/VISITOR_NO'}"
+                                            enabled="true"
+                                        >
+                                            <suggestionItems>
+                                                <core:Item
+                                                    key="{}"
+                                                    text="{}"
+                                                />
+                                            </suggestionItems>
+                                        </Input>
+                                    </f:fields>
+
+                                    <Button
+                                        id="btnEdit"
+                                        text="Search"
+                                        press="getVPDetails"
+                                        icon="sap-icon://search"
+                                        enabled="true"
+                                    />
+                                    <Button
+                                        id="btnChkOut"
+                                        text="Check Out"
+                                        press="onBtnChkOut"
+                                        icon="sap-icon://out"
+                                        visible="false"
+                                    />
+                                    <Button
+                                        id="spacer"
+                                        icon="sap-icon://out"
+                                        visible="false"
+                                    />
+                                    
+                                    <Image
+                                        id="img"
+                                        src="{= ${ImageModel>/VISITOR_IMG} ? ${ImageModel>/VISITOR_IMG} : '../Images/Visitor.png'}"
+                                        width="150px"
+                                        height="120px"
+                                        visible="true"
+                                        class="imageWithBorder"
+                                    />
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+            </VBox>
+            <VBox class="sapUiSmallMargin customVBox2" >
+                <f:Form
+                    id="FormChangeColumn_oneGroup234"
+                    editable="true"
+                >
+                    <f:title>
+                        <core:Title text="Visit Details" />
+                    </f:title>
+                    <f:layout>
+                        <f:ColumnLayout
+                            columnsM="2"
+                            columnsL="3"
+                            columnsXL="4"
+                        />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer>
+                            <f:formElements>
+                                <f:FormElement label="Visitor Name">
+                                    <f:fields>
+                                        <Input
+                                            id='VISITOR_NAME'
+                                            value="{gpData>/VISITOR_NAME}"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Visitor CNIC">
+                                    <f:fields>
+                                        <Input
+                                            id='VISITOR_CNIC'
+                                            value="{gpData>/VISITOR_CNIC}"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Visitor Contact">
+                                    <f:fields>
+                                        <Input
+                                            id='VISITOR_CONTACT'
+                                            value="{gpData>/VISITOR_CONTACT}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Host Name">
+                                    <f:fields>
+                                        <Input
+                                            id='HOST_NAME'
+                                            value="{gpData>/HOST_NAME}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Visit Location">
+                                    <f:fields>
+                                        <Input
+                                            id='VISIT_LOC'
+                                            value="{gpData>/VISIT_LOCATION}"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Purpose of visit">
+                                    <f:fields>
+                                        <Input
+                                            id='POV'
+                                            value="{gpData>/PURPOSE_OF_VISIT}"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Visitor Category">
+                                    <f:fields>
+                                        <Input
+                                            id='VISITOR_CAT'
+                                            value="{gpData>/VISITOR_CATEGORY}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Vehicle Description">
+                                    <f:fields>
+                                        <Input
+                                            id='VEHICLE_DES'
+                                            value="{gpData>/VEHICLE_DESCRIPTION}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Vehicle Number">
+                                    <f:fields>
+                                        <Input
+                                            id="VEHICLE_NO"
+                                            placeholder="Vehicle No"
+                                            value="{gpData>/VEHICLE_NO}"
+                                            editable="true"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Visitor's Company">
+                                    <f:fields>
+                                        <Input
+                                            id="VISITOR_COMPANY"
+                                            placeholder="Company"
+                                            value="{gpData>/VISITOR_COMPANY}"
+                                            editable="true"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Visit Date">
+                                    <f:fields>
+                                        <Input
+                                            id='VISIT_DATE'
+                                            value="{gpData>/VISIT_DATE}"
+                                            type="Date"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+
+                                <f:FormElement label="Expected Duration">
+                                    <f:fields>
+                                        <Input
+                                            id='EXP_DURATION'
+                                            value="{gpData>/EXPECTED_DURATION}"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+
+                                <f:FormElement label="CheckIn Date / Time">
+                                    <f:fields>
+                                        <Input
+                                            id="checkInDate"
+                                            editable="false"
+                                            value="{gpData>/CHECKIN_DATE}"
+                                        >
+                                            <layoutData>
+                                                <f:ColumnElementData
+                                                    cellsSmall="6"
+                                                    cellsLarge="2"
+                                                />
+                                            </layoutData>
+                                        </Input>
+                                        <Input
+                                            id="checkInTime"
+                                            editable="false"
+                                            value="{gpData>/CHECKIN_TIME}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+
+                                <f:FormElement label="CheckOut Date / Time ">
+                                    <f:fields>
+                                        <Input
+                                            id="checkOutDate"
+                                            editable="false"
+                                            value="{gpData>/CHECKOUT_DATE}"
+                                        >
+                                            <layoutData>
+                                                <f:ColumnElementData
+                                                    cellsSmall="6"
+                                                    cellsLarge="2"
+                                                />
+                                            </layoutData>
+                                        </Input>
+                                        <Input
+                                            id="checkOutTime"
+                                            value="{gpData>/CHECKOUT_TIME}"
+                                            editable="false"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Remarks">
+                                    <f:fields>
+                                        <Input
+                                            id='REMARKS'
+                                            value="{gpData>/REMARKS}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+            </VBox>
+
+            <VBox class="sapUiSmallMargin">
+                <f:Form
+                    id="FormChangeColumn_oneGroup235"
+                    editable="true"
+                    visible="false"
+                >
+                    <f:title>
+                        <core:Title text="Manual Tracking" />
+                    </f:title>
+
+                    <f:layout>
+                        <f:ColumnLayout
+                            columnsM="2"
+                            columnsL="3"
+                            columnsXL="4"
+                        />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer>
+                            <f:formElements>
+                                <f:FormElement label="Date In">
+                                    <f:fields>
+                                        <Input
+                                            id='DATEIN'
+                                            value="{gpData>/DATEIN}"
+                                            required="true"
+                                            type="Date"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Time In">
+                                    <f:fields>
+                                        <Input
+                                            id='TIMEIN'
+                                            value="{gpData>/TIMEIN}"
+                                            required="true"
+                                            type="Time"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Date Out">
+                                    <f:fields>
+                                        <Input
+                                            id='DATEOUT'
+                                            value="{gpData>/DATEOUT}"
+                                            required="true"
+                                            type="Date"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+
+                                <f:FormElement label="Time Out">
+                                    <f:fields>
+                                        <Input
+                                            id='TIMEOUT'
+                                            value="{gpData>/TIMEOUT}"
+                                            required="true"
+                                            type="Time"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+
+                                <f:FormElement
+                                    label="Reason of Manual Tracking"
+                                >
+                                    <f:fields>
+                                        <Input
+                                            id='REASON_MT'
+                                            value="{gpData>/REASON_MT}"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+            </VBox>
+        </content>
+        <footer>
+            <OverflowToolbar id="_IDGenOverflowToolbar2">
+                <Button
+                    text="Back"
+                    press="onBackPress"
+                />
+                <ToolbarSpacer id="_IDGenToolbarSpacer1" />
+                <Button
+                    id="createVP"
+                    type="Accept"
+                    text="Create Visitor Pass"
+                    press="onCreateVP"
+                    ariaDescribedBy="acceptButtonDescription genericButtonDescription"
+                >
+                    <layoutData>
+                        <FlexItemData growFactor="1" />
+                    </layoutData>
+                </Button>
+                <Button
+                    type="Accept"
+                    text="Download PDF"
+                    press="onDownloadVP"
+                    ariaDescribedBy="acceptButtonDescription genericButtonDescription"
+                >
+                    <layoutData>
+                        <FlexItemData growFactor="1" />
+                    </layoutData>
+                </Button>
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

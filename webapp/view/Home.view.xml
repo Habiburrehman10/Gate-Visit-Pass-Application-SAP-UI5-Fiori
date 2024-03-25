@@ -1,0 +1,88 @@
+<mvc:View
+    controllerName="gatepass.gatepass.controller.Home"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+>
+    <Page
+        id="page"
+        title="{i18n>title}"
+        class="sapUiContentPadding backgroundPage"
+    >
+
+    <customHeader
+    >
+            <Bar>
+                <contentMiddle>
+                    <Image
+                        id="HomeImage"
+                        src=""
+                        height="30px"
+                        width="30px"
+                    />
+                    <Title text="      " />
+                    <Title text="Gate / Visitor Pass Application" />
+                </contentMiddle>
+            </Bar>
+        </customHeader>
+        <content>
+            <!-- Vertical layout to center align the content -->
+            <VBox height="50px" />
+            <Title
+                text="Welcome To Gate / Visitor Pass Application"
+                class="customHeader"
+            />
+            <l:VerticalLayout
+                width="100%"
+                id="verticalLayout"
+                class="centeredVerticalLayout"
+            >
+                <!-- FlexBox to align buttons vertically in the center -->
+                <FlexBox
+                    justifyContent="Center"
+                    alignItems="Center"
+                    direction="Column"
+                >
+                    <!-- Button 1 -->
+                    <Button
+                        id = "gpBtn"
+                        text="Gate Pass"
+                        press="onGPPress"
+                        class="customButton"
+                    />
+                    <!-- Button 2 -->
+                    <Button
+                        id = "vpBtn"
+                        text="Visitor Pass"
+                        press="onVSPress"
+                        class="customButton"
+                    />
+                    <!-- Button 3 -->
+                    <Button
+                        id = "drGPBtn"
+                        text="GP Report"
+                        press="onDRGPress"
+                        class="customButton"
+                    />
+                    <Button
+                        id = "drVPBtn"
+                        text="VP Report"
+                        press="onDRVPress"
+                        class="customButton"
+                    />
+                </FlexBox>
+            </l:VerticalLayout>
+        </content>
+        <footer>
+            <OverflowToolbar id="_IDGenOverflowToolbar2">
+                <ToolbarSpacer />
+                <Label
+                    text="©2024 TallyMarks Consulting. All rights reserved."
+                    textAlign="Center"
+                />
+                <ToolbarSpacer />
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

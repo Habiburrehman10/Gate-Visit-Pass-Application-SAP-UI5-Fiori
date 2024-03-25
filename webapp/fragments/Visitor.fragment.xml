@@ -1,0 +1,28 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <SelectDialog
+        noDataText="No Products Found"
+        title="Select Visitor Pass"
+        search="ParenthandleSearch"
+        confirm="selectParentItem"
+        liveChange="_ParentValueHelpSearch"
+        cancel="handleClose"
+        items="{/matData}"
+        id="vp"
+    >
+        <StandardListItem
+            title="VisitorPass Number"
+            description="{VISITOR_NO}"
+            icon="sap-icon://sys-add"
+            class="sapUiSmallMarginEnd decreaseFont"
+            iconDensityAware="false"
+            iconInset="false"
+            type="Active"
+        
+        />
+    </SelectDialog>
+
+    
+</core:FragmentDefinition>

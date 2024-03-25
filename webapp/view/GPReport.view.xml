@@ -1,0 +1,534 @@
+<mvc:View
+    controllerName="gatepass.gatepass.controller.GPReport"
+    xmlns:table="sap.ui.table"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:h="sap.ui.layout"
+    xmlns:s="sap.m.SearchField"
+>
+    <Page
+        id="page"
+        title="{i18n>titleGPReport}"
+    >
+    <customHeader
+    >
+            <Bar>
+                <contentMiddle>
+                    <Image
+                        id="GPImage"
+                        src=""
+                        height="30px"
+                        width="30px"
+                    />
+                    <Title text="      " />
+                    <Title text="Detail Report For GatePass" />
+                </contentMiddle>
+            </Bar>
+        </customHeader>
+        <content>
+            <fb:FilterBar
+                id="filterBar"
+                filterBarExpanded="false"
+                filterChange=".onFilterChange"
+                showClearOnFB="true"
+                clear=".onClearFilters"
+                showGoOnFB="false"
+                useToolbar="false"
+                visible="false"
+                
+            >
+                <fb:filterGroupItems>
+                    
+                    <fb:FilterGroupItem
+                        name="GP No"
+                        label="GP No"
+                        groupName="Group2"
+                        visibleInFilterBar="false"
+                    >
+                        <fb:control>
+                        <HBox >
+                                <Input
+                                    id="initialGP"
+                                    placeholder="Gp No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="gatePassFragment"
+                                    liveChange=".oninitialGPChange"
+                                />
+                                <Input
+                                    id="finalGP"
+                                    placeholder="Gp No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="gatePassFragment"
+                                    liveChange=".onfinalGPChange"
+                                />
+                            </HBox>
+                           
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    
+                    <fb:FilterGroupItem
+                        name="PO No"
+                        label="PO No"
+                        groupName="Group2"
+                        visibleInFilterBar="false"
+                    >
+                        <fb:control>
+                        <HBox>
+                                <Input
+                                    id="initialPO"
+                                    placeholder="Po No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="refDocFragment"
+                                    liveChange=".oninitialPOChange"
+                                />
+                                <Input
+                                    id="finalPO"
+                                    placeholder="Po No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="refDocFragment"
+                                    liveChange=".onfinalPOChange"
+                                />
+                            </HBox>
+                            
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    <fb:FilterGroupItem
+                        name="Ship No"
+                        label="Ship No"
+                        groupName="Group2"
+                        visibleInFilterBar="false"
+                    >
+                        <fb:control>
+                           <HBox>
+                                <Input
+                                    id="initialSHIP"
+                                    placeholder="Ship No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="refDocFragment"
+                                    liveChange=".oninitialSHIPChange"
+                                />
+                                <Input
+                                    id="finalSHIP"
+                                    placeholder="Ship No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="refDocFragment"
+                                    liveChange=".onfinalSHIPChange"
+                                />
+                            </HBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    
+                    <fb:FilterGroupItem
+                        name="Material No"
+                        label="Material No"
+                        groupName="Group2"
+                        visibleInFilterBar="false"
+                    >
+                        <fb:control>
+                            <HBox>
+                                <Input
+                                    id="initialMN"
+                                    placeholder="Material No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="refDocFragment"
+                                    liveChange=".oninitialMNChange"
+                                />
+                                <Input
+                                    id="finalMN"
+                                    placeholder="Material No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="refDocFragment"
+                                    liveChange=".onfinalMNChange"
+                                />
+                            </HBox>
+                      
+                        </fb:control>
+                    </fb:FilterGroupItem>
+
+                    <fb:FilterGroupItem
+                        name="Vehicle No"
+                        label="Vehicle No"
+                        groupName="Group2"
+                        visibleInFilterBar="false"
+                    >
+                        <fb:control>
+
+                        <HBox>
+                                <Input
+                                    id="initialVN"
+                                    placeholder="Vehicle No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="refDocFragment"
+                                    liveChange=".oninitialVNChange"
+                                />
+                              
+                            </HBox>
+                           
+                        </fb:control>
+                    </fb:FilterGroupItem>
+
+                    <fb:FilterGroupItem
+                        name="Date"
+                        label="Date"
+                        groupName="Group2"
+                        visibleInFilterBar="false"
+                    >
+                        <fb:control>
+                            <HBox >
+                                <Input
+                                    id="startDateInput"
+                                    width="110px"
+                                    type="Date"
+                                    liveChange=".onStartDateChange"
+                                />
+                                <Input
+                                    id="endDateInput"
+                                    width="95px"
+                                    type="Date"
+                                    liveChange=".onEndDateChange"
+                                    class="Date"
+                                />
+                            </HBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                </fb:filterGroupItems>
+            </fb:FilterBar>
+
+            <table:Table
+                id="Tableid"
+                rows="{oModelGP>/Table}"
+                rowSelectionChange="onchange"
+                selectionMode="Single"
+                fixedColumnCount="1"
+                alternateRowColors="true"
+            >
+                <table:extension>
+                    <Toolbar>
+                        <ToolbarSpacer />
+                        <Button
+                            id="sortButton"
+                            icon="sap-icon://sort"
+                            press="onSortIconPress"
+                            type="Emphasized"
+                        />
+                        <Button
+                            id="filterButton"
+                            icon="sap-icon://filter"
+                            press="onFilterIconPress"
+                            type="Emphasized"
+                        />
+                        <Button
+                            id="clearFilterButton"
+                            icon="sap-icon://clear-filter"
+                            press="onFilterClearIconPress"
+                            type="Emphasized"
+                            visible="false"
+                        />
+                        <Button
+                            icon="sap-icon://search"
+                            press="onSearchIconPress"
+                            type="Emphasized"
+                        />
+                        <SearchField
+                            liveChange="onSearchFieldLiveChange"
+                            width="22%"
+                            visible="false"
+                            id="searchField"
+                        />
+                    </Toolbar>
+                </table:extension>
+
+                <table:columns >
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="GatePass No" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>GP_NO}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Refernce Document" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>REF_DOC}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Refernce Type" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>REF_TYPE}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Driver Name" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>DRIVER_NAME}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width = "110px">
+                        <table:label>
+                            <Label text="Driver Nic" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>DRIVER_NIC}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width = "110px">
+                        <table:label>
+                            <Label text="Driver Contact" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>DRIVER_CONTACT}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Driver Challan" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>DRIVER_CHALLAN}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Vehicle NO" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>VEHICLE_NO}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Truck Recipt No" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>TRUCK_RECPT_NO}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Reason" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>REASON}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Remarks" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>REMARKS}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Customer" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>CUSTOMER}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Supplier" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>SUPPLIER}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Delivery Challan Date" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>DELIV_CHALLAN_DATE}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Expiry Delivery Date" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>EXP_DELIV_DATE}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Gate Incharge" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>GATE_INCHARGE}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Mode Of Transport" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>MOT}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Transport" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>TRANSPORT}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Department" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>DEPARTMENT}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Description" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>DESCRIPTION}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Destination" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>DESTINATION}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="Exit Time" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>EXIT_TIME}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="CheckIn Date" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>CHECKIN_DATE}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="CheckIn Time" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>CHECKIN_TIME}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="CheckOut Date" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>CHECKOUT_DATE}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="CheckOut Time" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>CHECKOUT_TIME}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Date In" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>DATEIN}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Time In" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>TIMEIN}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Date Out" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>DATEOUT}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Timeout" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>TIMEOUT}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Reason of Manual Tracking" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>REASON_MT}" />
+                        </table:template>
+                    </table:Column>
+                </table:columns>
+            </table:Table>
+        </content>
+        <footer>
+            <OverflowToolbar id="_IDGenOverflowToolbar2">
+                <Button
+                    text="Back"
+                    press="onBackPress"
+                />
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

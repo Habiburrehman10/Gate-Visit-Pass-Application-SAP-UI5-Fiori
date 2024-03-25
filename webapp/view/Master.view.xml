@@ -1,0 +1,678 @@
+<mvc:View
+    controllerName="gatepass.gatepass.controller.Master"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+>
+    <Page>
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Image
+                        id="MasterImage"
+                        src=""
+                        height="30px"
+                        width="30px"
+                    />
+                    <Title text="      " />
+                    <Title text="Gate Pass Application" />
+                </contentLeft>
+            </Bar>
+        </customHeader>
+
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <f:Form
+                    id="FormToolbar"
+                    editable="true"
+                    ariaLabelledBy="Title1"
+                >
+                    <f:toolbar>
+                        <Toolbar id="TB1">
+                            <Title
+                                id="Title1"
+                                text="Gate Pass Selection"
+                            />
+                            <ToolbarSpacer />
+                            <Button
+                                        id="manualTracking"
+                                        icon="sap-icon://detail-view"
+                                        press="manualTracking"
+                                        text="Manual Tracking"
+                                        enabled="true"
+                                    />
+                            <Button
+                                id="delete"
+                                icon="sap-icon://delete"
+                                press="deleteData"
+                                enabled="false"
+                            />
+                            <Button
+                                id="save"
+                                icon="sap-icon://save"
+                                press="updateData"
+                                enabled="false"
+                            />
+                            <Button
+                                id="create"
+                                icon="sap-icon://create"
+                                press="onCreate"
+                            />
+                        </Toolbar>
+                    </f:toolbar>
+                    <f:layout>
+                        <f:ResponsiveGridLayout
+                            labelSpanXL="4"
+                            labelSpanL="3"
+                            labelSpanM="4"
+                            labelSpanS="12"
+                            adjustLabelSpan="false"
+                            emptySpanXL="0"
+                            emptySpanL="2"
+                            emptySpanM="0"
+                            emptySpanS="0"
+                            columnsXL="2"
+                            columnsL="1"
+                            columnsM="1"
+                            singleContainerFullSize="false"
+                        />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer ariaLabelledBy="Title2">
+                            <f:formElements>
+                                <f:FormElement>
+                                    <f:fields>
+                                        <RadioButton
+                                            id="RB4-1"
+                                            text="Search Gate Pass"
+                                            class=""
+                                            select="onRb1Select"
+                                        />
+
+                                        <Input
+                                            placeholder="Gate Pass Number"
+                                            id="gatepassNum"
+                                            value="{gpData>/GP_NO}"
+                                            showSuggestion="true"
+                                            showValueHelp="true"
+                                            valueHelpRequest="gatePassFragment"
+                                            suggestionItems="{path: 'F4data>/GP_NO'}"
+                                            enabled="false"
+                                        >
+                                            <suggestionItems>
+                                                <core:Item
+                                                    key="{}"
+                                                    text="{}"
+                                                />
+                                            </suggestionItems>
+                                        </Input>
+                                    </f:fields>
+
+                                    <Button
+                                        id="btnEdit"
+                                        text="Search"
+                                        press="getGPDetails"
+                                        icon="sap-icon://search"
+                                        enabled="false"
+                                    />
+                                    <Button
+                                        id="btnChkOut"
+                                        text="Check Out"
+                                        press="onBtnChkOut"
+                                        icon="sap-icon://out"
+                                        visible="false"
+                                    />
+                                    <CheckBox
+                                        id="chkCityOffice"
+                                        class="align-right"
+                                        text="City Office"
+                                        selected="{gpData>/CITYOFFICE}"
+                                        width="100%"
+                                    />
+                                </f:FormElement>
+
+                                <f:FormElement>
+                                    <f:fields>
+                                        <RadioButton
+                                            id="RB4-2"
+                                            text="Reference Document"
+                                            select="onRb2Select"
+                                            selected="true"
+                                        />
+
+                                        <Input
+                                            id="refDocNum"
+                                            placeholder="Reference Doc Number"
+                                            liveChange="changeLive"
+                                            showSuggestion="true"
+                                            showValueHelp="true"
+                                            value="{gpData>/REF_DOC}"
+                                            valueHelpRequest="refDocFragment"
+                                            suggestionItems="{path: 'F4data>/EBELN'}"
+                                            editable="true"
+                                        >
+                                            <suggestionItems>
+                                                <core:Item
+                                                    key="{}"
+                                                    text="{}"
+                                                />
+                                            </suggestionItems>
+                                        </Input>
+                                        <Select
+                                            id="referencesType"
+                                            selectedKey="{gpData>/REF_TYPE}"
+                                            editable="true"
+                                            change="onSelectChange"
+                                        >
+                                            <items>
+                                                <core:Item
+                                                    text="Purchase Order"
+                                                    key="PO"
+                                                />
+                                                <core:Item
+                                                    text="Shipment"
+                                                    key="SHIP"
+                                                />
+                                                <!-- <core:Item
+                                                    text="STO"
+                                                    key="STO"
+                                                /> -->
+                                                <core:Item
+                                                    text="GatePass"
+                                                    key="GP"
+                                                />
+                                                <core:Item
+                                                    text="Other"
+                                                    key="OT"
+                                                />
+                                            </items>
+                                        </Select>
+                                    </f:fields>
+                                    <Button
+                                        id="btnGo"
+                                        text="Go"
+                                        press="getItemlist"
+                                        icon="sap-icon://begin"
+                                    />
+                                    <CheckBox
+                                        id="chkReturnable"
+                                        class="align-right1"
+                                        selected="{gpData>/RETURNABLE}"
+                                        text="Returnable"
+                                        width="100%"
+                                    />
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+            </VBox>
+            <VBox class="sapUiSmallMargin">
+                <f:Form
+                    id="FormChangeColumn_oneGroup234"
+                    editable="true"
+                >
+                    <f:title>
+                        <core:Title text="Gate Pass Details" />
+                    </f:title>
+                    <f:layout>
+                        <f:ColumnLayout
+                            columnsM="2"
+                            columnsL="3"
+                            columnsXL="4"
+                        />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer>
+                            <f:formElements>
+                                <f:FormElement label="Driver Name">
+                                    <f:fields>
+                                        <Input
+                                            id='DRIVER_NAME'
+                                            value="{gpData>/DRIVER_NAME}"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Driver NIC">
+                                    <f:fields>
+                                        <Input
+                                            id='DRIVER_NIC'
+                                            value="{gpData>/DRIVER_NIC}"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Driver Contact">
+                                    <f:fields>
+                                        <Input
+                                            id='DRIVER_CONTACT'
+                                            value="{gpData>/DRIVER_CONTACT}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Driver Challan">
+                                    <f:fields>
+                                        <Input
+                                            id='DRIVER_CHALLAN'
+                                            value="{gpData>/DRIVER_CHALLAN}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Vehicle No">
+                                    <f:fields>
+                                        <Input
+                                            id='VEHICLE_NO'
+                                            value="{gpData>/VEHICLE_NO}"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Truck Recipt No">
+                                    <f:fields>
+                                        <Input
+                                            id='TRUCK_RECPT_NO'
+                                            value="{gpData>/TRUCK_RECPT_NO}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Reason">
+                                    <f:fields>
+                                        <Input
+                                            id='REASON'
+                                            value="{gpData>/REASON}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Remarks">
+                                    <f:fields>
+                                        <Input
+                                            id='REMARKS'
+                                            value="{gpData>/REMARKS}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Supplier Details">
+                                    <f:fields>
+                                        <Input
+                                            id="supplierNumber"
+                                            placeholder="Supplier"
+                                            liveChange="changeLive"
+                                            showSuggestion="true"
+                                            showValueHelp="true"
+                                            value="{gpData>/SUPPLIER}"
+                                            valueHelpRequest="supplierFragment"
+                                            suggestionItems="{path: 'F4data>/SUPPLIER'}"
+                                            editable="true"
+                                            required="true"
+                                        >
+                                            <suggestionItems>
+                                                <core:Item
+                                                    key="{}"
+                                                    text="{}"
+                                                />
+                                            </suggestionItems>
+                                        </Input>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Customer Details">
+                                    <f:fields>
+                                        <Input
+                                            id="customerNumber"
+                                            placeholder="Customer"
+                                            liveChange="changeLive"
+                                            showSuggestion="true"
+                                            showValueHelp="true"
+                                            value="{gpData>/CUSTOMER}"
+                                            valueHelpRequest="customerFragment"
+                                            suggestionItems="{path: 'F4data>/CUSTOMER'}"
+                                            editable="true"
+                                            required="true"
+                                        >
+                                            <suggestionItems>
+                                                <core:Item
+                                                    key="{}"
+                                                    text="{}"
+                                                />
+                                            </suggestionItems>
+                                        </Input>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement
+                                    label="Deliv. Challan Date / Expected Deliv Date"
+                                >
+                                    <f:fields>
+                                        <Input
+                                            id='DELIV_CHALLAN_DATE'
+                                            value="{gpData>/DELIV_CHALLAN_DATE}"
+                                            type="Date"
+                                        >
+                                            <layoutData>
+                                                <f:ColumnElementData
+                                                    cellsSmall="6"
+                                                    cellsLarge="2"
+                                                />
+                                            </layoutData>
+                                        </Input>
+                                        <Input
+                                            id='EXP_DELIV_DATE'
+                                            value="{gpData>/EXP_DELIV_DATE}"
+                                            type="Date"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+
+                                <f:FormElement label="Gate Incharge">
+                                    <f:fields>
+                                        <Input
+                                            id='GATE_INCHARGE'
+                                            value="{gpData>/GATE_INCHARGE}"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Mode Of Transport">
+                                    <f:fields>
+                                        <Input
+                                            id='MOT'
+                                            value="{gpData>/MOT}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Transporter">
+                                    <f:fields>
+                                        <Input
+                                            id='TRANSPORT'
+                                            value="{gpData>/TRANSPORT}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Department">
+                                    <f:fields>
+                                        <Input
+                                            id='DEPARTMENT'
+                                            value="{gpData>/DEPARTMENT}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Description">
+                                    <f:fields>
+                                        <Input
+                                            id='DESCRIPTION'
+                                            value="{gpData>/DESCRIPTION}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Destination">
+                                    <f:fields>
+                                        <Input
+                                            id='DESTINATION'
+                                            value="{gpData>/DESTINATION}"
+                                            required="true"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Time Of Exit">
+                                    <f:fields>
+                                        <DateTimePicker
+                                            id="DTP2"
+                                            minutesStep="3"
+                                            secondsStep="5"
+                                            value="{
+                                            'path': 'gpData>/EXIT_TIME'
+                                        }"
+                                            change="handleChange"
+                                           
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="CheckIn Date">
+                                    <f:fields>
+                                        <Input
+                                            id="checkInDate"
+                                            editable="false"
+                                            value="{gpData>/CHECKIN_DATE}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="CheckIn Time">
+                                    <f:fields>
+                                        <Input
+                                            id="checkInTime"
+                                            editable="false"
+                                            value="{gpData>/CHECKIN_TIME}"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+
+                                <f:FormElement label="CheckOut Date / Time ">
+                                    <f:fields>
+                                        <Input
+                                            id="checkOutDate"
+                                            editable="false"
+                                            value="{gpData>/CHECKOUT_DATE}"
+                                        >
+                                            <layoutData>
+                                                <f:ColumnElementData
+                                                    cellsSmall="6"
+                                                    cellsLarge="2"
+                                                />
+                                            </layoutData>
+                                        </Input>
+                                        <Input
+                                            id="checkOutTime"
+                                            value="{gpData>/CHECKOUT_TIME}"
+                                            editable="false"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+            </VBox>
+             <VBox class="sapUiSmallMargin">
+
+                
+                <f:Form
+                    id="FormChangeColumn_oneGroup235"
+                    editable="true"
+                    visible="false"
+                >
+                   
+                    
+                    <f:title>
+                        <core:Title text="Manual Tracking"
+                        />
+                    </f:title>
+               
+                    <f:layout>
+                        <f:ColumnLayout
+                            columnsM="2"
+                            columnsL="3"
+                            columnsXL="4"
+                        />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer>
+                            <f:formElements>
+                                <f:FormElement label="Date In">
+                                    <f:fields>
+                                        <Input
+                                            id='DATEIN'
+                                            value="{gpData>/DATEIN}"
+                                            required="true"
+                                            type="Date"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Time In">
+                                    <f:fields>
+                                        <Input
+                                            id='TIMEIN'
+                                            value="{gpData>/TIMEIN}"
+                                            required="true"
+                                            type="Time"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Date Out">
+                                    <f:fields>
+                                        <Input
+                                            id='DATEOUT'
+                                            value="{gpData>/DATEOUT}"
+                                            required="true"
+                                            type="Date"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+
+                                <f:FormElement label="Time Out">
+                                    <f:fields>
+                                        <Input
+                                            id='TIMEOUT'
+                                            value="{gpData>/TIMEOUT}"
+                                            required="true"
+                                            type="Time"
+                                        />
+                                    </f:fields>
+                                </f:FormElement>
+
+                                <f:FormElement
+                                    label="Reason of Manual Tracking"
+                                >
+                                    <f:fields>
+                                        <Input
+                                            id='REASON_MT'
+                                            value="{gpData>/REASON_MT}"
+                                            required="true"
+                                        />
+                                        
+                                    </f:fields>
+                                </f:FormElement>
+
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+            </VBox>
+            <Table
+                inset="false"
+                id="ItemData"
+                items="{lineItemModel>\ITEMS}"
+                mode="Delete"
+                alternateRowColors="true"
+            >
+                <headerToolbar>
+                    <Toolbar id="_IDGenToolbar1">
+                        <ToolbarSpacer width="1rem" />
+                        <Title
+                            id="_IDGenTitle1"
+                            text="Item Details"
+                        />
+                        <ToolbarSpacer id="_IDGenToolbarSpacer2" />
+                        <Button
+                            icon="sap-icon://add"
+                            type="Emphasized"
+                            press="onAddRow"
+                        />
+                        <Button
+                            icon="sap-icon://save"
+                            type="Emphasized"
+                            press="onSaveRow"
+                        />
+                        <Button
+                            icon="sap-icon://edit"
+                            type="Emphasized"
+                            press="onEditRow"
+                        />
+                    </Toolbar>
+                </headerToolbar>
+                <columns>
+                    <Column hAlign="Center">
+                        <Text text="Item No" />
+                    </Column>
+                    <Column
+                        id="_IDGenColumn1"
+                        hAlign="Center"
+                    >
+                        <Text text="Ref Document" />
+                    </Column>
+                    <Column
+                        id="_IDGenColumn2"
+                        hAlign="Center"
+                    >
+                        <Text text="Material No" />
+                    </Column>
+                    <Column
+                        id="_IDGenColumn3"
+                        hAlign="Center"
+                    >
+                        <Text text="Material Description" />
+                    </Column>
+                    <Column
+                        id="_IDGenColumn4"
+                        hAlign="Center"
+                    >
+                        <Text text="Quantity" />
+                    </Column>
+                    <Column
+                        id="_IDGenColumn5"
+                        hAlign="Center"
+                    >
+                        <Text text="UoM" />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem
+                        id="_IDGenColumnListItem1"
+                        type="Active"
+                    >
+                        <cells>
+                            <Text text="{} " />
+                            <ObjectIdentifier
+                                title="{}"
+                                id="refDoc"
+                            />
+                            <Text text="{} " />
+                            <Text text="{} " />
+                            <Text text="{} " />
+                            <Text text="{} " />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+        <footer>
+            <OverflowToolbar id="_IDGenOverflowToolbar2">
+            <Button text="Back" press="onBackPress" />
+                <ToolbarSpacer id="_IDGenToolbarSpacer1" />
+                <Button
+                    id="createGP"
+                    type="Accept"
+                    text="Create Gate Pass"
+                    press="onCreateGP"
+                    ariaDescribedBy="acceptButtonDescription genericButtonDescription"
+                >
+                    <layoutData>
+                        <FlexItemData growFactor="1" />
+                    </layoutData>
+                </Button>
+                <Button
+                    type="Accept"
+                    text="Download PDF"
+                    press="onDownloadGP"
+                    ariaDescribedBy="acceptButtonDescription genericButtonDescription"
+                >
+                    <layoutData>
+                        <FlexItemData growFactor="1" />
+                    </layoutData>
+                </Button>
+                
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

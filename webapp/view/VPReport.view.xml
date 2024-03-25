@@ -1,0 +1,387 @@
+<mvc:View
+    controllerName="gatepass.gatepass.controller.VPReport"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:table="sap.ui.table"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:h="sap.ui.layout"
+    xmlns:s="sap.m.SearchField"
+>
+    <Page
+        id="page"
+        title="{i18n>titleVPReport}"
+    >
+
+    <customHeader
+    >
+            <Bar>
+                <contentMiddle>
+                    <Image
+                        id="VPImage"
+                        src=""
+                        height="30px"
+                        width="30px"
+                    />
+                    <Title text="      " />
+                    <Title text="Detail Report For VisitPass" />
+                </contentMiddle>
+            </Bar>
+        </customHeader>
+        <content>
+            <fb:FilterBar
+                id="filterBar"
+                filterBarExpanded="true"
+                filterChange=".onFilterChange"
+                showClearOnFB="true"
+                clear=".onClearFilters"
+                showGoOnFB="false"
+                useToolbar="false"
+                visible="false"
+            >
+                <fb:filterGroupItems>
+                    <fb:FilterGroupItem
+                        name="Date"
+                        label="Date"
+                        groupName="Group1"
+                        visibleInFilterBar="false"
+                    >
+                        <fb:control>
+                            <HBox>
+                                <Input
+                                    id="startDateInput"
+                                    placeholder="Start Date"
+                                    width="100%"
+                                    type="Date"
+                                    liveChange=".onStartDateChange"
+                                />
+                                <Input
+                                    id="endDateInput"
+                                    placeholder="End Date"
+                                    width="100%"
+                                    type="Date"
+                                    liveChange=".onEndDateChange"
+                                />
+                            </HBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    <fb:FilterGroupItem
+                        name="Visit Pass No"
+                        label="Visit Pass No"
+                        groupName="Group1"
+                        visibleInFilterBar="false"
+                    >
+                        <fb:control>
+                           <HBox >
+                                <Input
+                                    id="initialVP"
+                                    placeholder="Vp No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="refDocFragment"
+                                    liveChange=".oninitialVPChange"
+                                />
+                                <Input
+                                    id="finalVP"
+                                    placeholder="Vp No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="refDocFragment"
+                                    liveChange=".onfinalVPChange"
+                                />
+                            </HBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    <fb:FilterGroupItem
+                        name="VP Vehicle No"
+                        label="VP Vehicle No"
+                        groupName="Group1"
+                        visibleInFilterBar="false"
+                    >
+                        <fb:control>
+                           
+                                <Input
+                                    
+                                    id="initialVN"
+                                    placeholder="Vehicle No"
+                                    width="100%"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest="refDocFragment"
+                                    liveChange=".oninitialVNChange"
+                                />
+                              
+                            
+                           
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                   
+                </fb:filterGroupItems>
+            </fb:FilterBar>
+
+            <table:Table
+                id="Tableid"
+                rows="{oModelVP>/Table}"
+                rowSelectionChange="onchange"
+                selectionMode="Single"
+                fixedColumnCount="1"
+                alternateRowColors="true"
+            >
+                <table:extension>
+                    <Toolbar>
+                        <ToolbarSpacer />
+                        <Button
+                            id="sortButton"
+                            icon="sap-icon://sort"
+                            press="onSortIconPress"
+                            type="Emphasized"
+                        />
+                        <Button
+                            id="filterButton"
+                            icon="sap-icon://filter"
+                            press="onFilterIconPress"
+                            type="Emphasized"
+                        />
+                        <Button
+                            id="clearFilterButton"
+                            icon="sap-icon://clear-filter"
+                            press="onFilterClearIconPress"
+                            type="Emphasized"
+                            visible="false"
+                        />
+                        <Button
+                            icon="sap-icon://search"
+                            press="onSearchIconPress"
+                            type="Emphasized"
+                        />
+                        <SearchField
+                            liveChange="onSearchFieldLiveChange"
+                            width="22%"
+                            visible="false"
+                            id="searchField"
+                        />
+                    </Toolbar>
+                </table:extension>
+
+                <table:columns>
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Visitor No" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>VISITOR_NO}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Visitor Name" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>VISITOR_NAME}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="110px">
+                        <table:label>
+                            <Label text="Visitor CNIC" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>VISITOR_CNIC}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="110px">
+                        <table:label>
+                            <Label text="Visitor Contact" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>VISITOR_CONTACT}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Host Name" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>HOST_NAME}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Visit Location" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>VISIT_LOCATION}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Purpose of Visit" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>PURPOSE_OF_VISIT}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Visitor Category" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>VISITOR_CATEGORY}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Vehicle Description" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>VEHICLE_DESCRIPTION}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Vehicle No" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>VEHICLE_NO}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Visitor Company" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>VISITOR_COMPANY}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Visit Date" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>VISIT_DATE}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Expected Duration" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>EXPECTED_DURATION}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Check-in Date" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>CHECKIN_DATE}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Check-in Time" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>CHECKIN_TIME}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Checkout Date" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>CHECKOUT_DATE}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Checkout Time" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>CHECKOUT_TIME}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Remarks" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>REMARKS}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Date In" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>DATEIN}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Time In" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>TIMEIN}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Date Out" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>DATEOUT}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Timeout" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>TIMEOUT}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="100px">
+                        <table:label>
+                            <Label text="Reason of Manual Tracking" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelVP>REASON_MT}" />
+                        </table:template>
+                    </table:Column>
+                </table:columns>
+            </table:Table>
+        </content>
+        <footer>
+            <OverflowToolbar id="_IDGenOverflowToolbar2">
+                <Button
+                    text="Back"
+                    press="onBackPress"
+                />
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>
