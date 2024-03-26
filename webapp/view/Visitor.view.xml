@@ -144,7 +144,7 @@
                                     
                                     <Image
                                         id="img"
-                                        src="{= ${ImageModel>/VISITOR_IMG} ? ${ImageModel>/VISITOR_IMG} : '../Images/Visitor.png'}"
+                                        src=""
                                         width="150px"
                                         height="120px"
                                         visible="true"

@@ -78,6 +78,13 @@ sap.ui.define([
                 this.getView().setModel(oModelPost, "gpData");
                 this.getView().setModel(oModelImg, "ImageModel")
 
+                var oImage = this.getView().byId("img");
+
+                var sVisitorImg = this.getView().getModel("ImageModel").getProperty("/VISITOR_IMG");
+                var sImagePath = sap.ui.require.toUrl("gatepass/gatepass/Images/Visitor.png");
+
+                oImage.setSrc(sVisitorImg ? sVisitorImg : sImagePath);
+
 
             },
 
@@ -283,7 +290,10 @@ sap.ui.define([
                 this.getView().byId("save").setEnabled(false);
                 this.getView().byId("delete").setEnabled(false);
                 this.getView().byId("camera").setVisible(true);
-                this.getView().byId("img").setSrc('../Images/Visitor.png');
+                debugger;
+                var src = this.getView().byId("img");
+                var sImagePath = sap.ui.require.toUrl("gatepass/gatepass/Images/Visitor.png");
+                this.getView().byId("img").setSrc(sImagePath);
                 this.getView().byId("btnChkOut").setVisible(false);
                 var form = this.getView().byId("FormChangeColumn_oneGroup235");
                 var btnMT = this.getView().byId("manualTracking");
@@ -294,12 +304,7 @@ sap.ui.define([
                 btnMT.setText("Manual Tracking");
                 btnMT.setType("Default");
 
-                var I = this.getView().getModel('ImageModel')
-                if (I) {
-                    var modelData = I.getData(); // Get the current data of the model
-                    modelData.VISITOR_IMG = null; // Set the property value to null
-                    I.setData(modelData);;
-                }
+            
 
                 var oModel = this.getView().getModel('gpData'); // Get the model bound to your view
 
@@ -541,9 +546,18 @@ sap.ui.define([
                         var sVisitorimg = oModel.getProperty("/VISITOR_IMG");
 
                         that.getView().byId("camera").setVisible(false);
+                        debugger;
+                        var oImage = that.getView().byId("img");
+                        oImage.mProperties.src = '';
 
                         var ModelImg = that.getView().getModel("ImageModel");
                         ModelImg.setProperty("/VISITOR_IMG", sVisitorimg);
+                    
+
+                        oImage.bindProperty("src", {
+                            path: "/VISITOR_IMG",
+                            model: "ImageModel"
+                        });
 
                         var btnChkOut = that.getView().byId("btnChkOut");
                         if (sDateIn === undefined && sTimeIn === undefined) {
@@ -981,7 +995,7 @@ sap.ui.define([
                         console.log(error);
                     });
 
-                    this.onAction();
+                    
                     this.Img = '';
 
                     var v = this.getView().getModel('GPDetailsModel')
@@ -994,6 +1008,8 @@ sap.ui.define([
                         modelData.VISITOR_IMG = null; // Set the property value to null
                         I.setData(modelData);;
                     }
+
+                    this.onAction();
 
 
 
