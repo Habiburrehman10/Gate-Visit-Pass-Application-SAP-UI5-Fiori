@@ -67,6 +67,7 @@ sap.ui.define([
                 CHECKIN_TIME: "",
                 CHECKOUT_DATE: "",
                 CHECKOUT_TIME: "",
+                GP_Type: "",
                 ITEMS: []
 
             },
@@ -74,6 +75,47 @@ sap.ui.define([
             onInit: function () {
 
                 let that = this;
+
+
+
+
+
+                debugger;
+                sap.m.MessageBox.show("Select Gate Pass Type", {
+                    icon: sap.m.MessageBox.Icon.NONE,
+                    title: "Gate Pass",
+                    // actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.OUTWARD],
+                    actions: ["Inward", "Outward"],
+                    onClose: function (oAction) {
+                        if (oAction === "Inward") {
+                            debugger;
+                            // var oComponent = that.getOwnerComponent();
+
+                            var sTitle = that.getView().byId("Title1");
+                            var GPType = that.getView().byId("GPType");
+
+
+                            sTitle.setProperty("text", "InWard GatePass Selection");
+                            GPType.setValue("Inward");
+
+
+                        } else if (oAction === "Outward") {
+                            debugger;
+
+                            var sTitle = that.getView().byId("Title1");
+                            var GPType = that.getView().byId("GPType");
+
+
+                            sTitle.setProperty("text", "OutWard GatePass Selection");
+                            GPType.setValue("Outward");
+
+
+
+                        }
+                    }
+                });
+
+
 
                 var sImagePath = sap.ui.require.toUrl("gatepass/gatepass/Images/TMCLogo_favicon.png");
                 this.getView().byId("MasterImage").setSrc(sImagePath);
@@ -212,6 +254,8 @@ sap.ui.define([
                 this.getView().byId("checkInTime").setValue("");
                 this.getView().byId("checkOutDate").setValue("");
                 this.getView().byId("checkOutTime").setValue("");
+                // this.getView().byId("GPType").setValue("");
+                this.getView().byId("GPType").setEditable(true);
                 this.getView().byId("btnChkOut").setVisible(false);
                 this.getView().byId("DATEIN").setValue("");
                 this.getView().byId("DATEOUT").setValue("");
@@ -335,6 +379,22 @@ sap.ui.define([
                     suppNo.setRequired(true);
                 } else {
                     suppNo.setRequired(false);
+                }
+
+
+            },
+
+            onGPSelectChange: function () {
+
+                let selectedKey = this.getView().byId("GPType").getSelectedKey();
+                var sTitle = this.getView().byId("Title1");
+                if (selectedKey === "Inward") {
+
+
+                    sTitle.setProperty("text", "InWard GatePass Selection");
+
+                } else if (selectedKey === "Outward") {
+                    sTitle.setProperty("text", "OutWard GatePass Selection");
                 }
 
 
@@ -786,7 +846,11 @@ sap.ui.define([
                         var oData = oModelGPDetails.getData();
 
                         Object.keys(oData).forEach(function (property) {
+                            debugger;
                             // Apply formatter only to properties that require formatting
+                            // if (property === "GP_TYPE") {
+                            //     return;
+                            // }
 
                             if (Array.isArray(oData[property])) {
                                 // If the property is an array, loop through each item and apply the formatter
@@ -849,11 +913,22 @@ sap.ui.define([
                         var sCheckInTime = oModel.getProperty("/CHECKIN_TIME");
                         var sCheckOutDate = oModel.getProperty("/CHECKOUT_DATE");
                         var sCheckOutTime = oModel.getProperty("/CHECKOUT_TIME");
+                        var sGPType = oModel.getProperty("/GP_TYPE");
                         var sDateIn = oModel.getProperty("/DATEIN");
                         var sTimeIn = oModel.getProperty("/TIMEIN");
                         var sDateOut = oModel.getProperty("/DATEOUT");
                         var sTimeOut = oModel.getProperty("/TIMEOUT");
                         var sReasonMt = oModel.getProperty("/REASON_MT");
+
+                        var sTitle = that.getView().byId("Title1");
+                        if (sGPType === "Inward") {
+                            sTitle.setProperty("text", "InWard GatePass Selection");
+                        }else if(sGPType === "Outward"){
+                            sTitle.setProperty("text", "OutWard GatePass Selection");
+                        }
+
+
+                    
 
 
                         var suppNo = that.getView().byId("supplierNumber");
@@ -920,6 +995,8 @@ sap.ui.define([
                         that.getView().byId("checkInTime").setValue(sCheckInTime);
                         that.getView().byId("checkOutDate").setValue(sCheckOutDate);
                         that.getView().byId("checkOutTime").setValue(sCheckOutTime);
+                        that.getView().byId("GPType").setValue(sGPType);
+                        that.getView().byId("GPType").setEditable(false);
                         that.getView().byId("DATEIN").setValue(sDateIn);
                         that.getView().byId("TIMEIN").setValue(sTimeIn);
                         that.getView().byId("DATEOUT").setValue(sDateOut);

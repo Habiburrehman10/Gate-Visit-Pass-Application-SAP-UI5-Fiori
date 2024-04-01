@@ -7,7 +7,7 @@
     xmlns="sap.m"
     xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
 >
-    <Page>
+    <Page id="master">
         <customHeader>
             <Bar>
                 <contentLeft>
@@ -18,7 +18,7 @@
                         width="30px"
                     />
                     <Title text="      " />
-                    <Title text="Gate Pass Application" />
+                    <Title id = "mainTitle" text="Gate Pass Application" />
                 </contentLeft>
             </Bar>
         </customHeader>
@@ -132,6 +132,7 @@
                                         selected="{gpData>/CITYOFFICE}"
                                         width="100%"
                                     />
+                                    
                                 </f:FormElement>
 
                                 <f:FormElement>
@@ -204,6 +205,7 @@
                                         text="Returnable"
                                         width="100%"
                                     />
+                                   
                                 </f:FormElement>
                             </f:formElements>
                         </f:FormContainer>
@@ -430,17 +432,21 @@
                                         />
                                     </f:fields>
                                 </f:FormElement>
-                                <f:FormElement label="CheckIn Date">
+                                <f:FormElement label="CheckIn Date / Time">
                                     <f:fields>
                                         <Input
                                             id="checkInDate"
                                             editable="false"
                                             value="{gpData>/CHECKIN_DATE}"
-                                        />
-                                    </f:fields>
-                                </f:FormElement>
-                                <f:FormElement label="CheckIn Time">
-                                    <f:fields>
+                                        >
+                                        <layoutData>
+                                                <f:ColumnElementData
+                                                    cellsSmall="6"
+                                                    cellsLarge="2"
+                                                />
+                                            </layoutData>
+                                        </Input>
+                                   
                                         <Input
                                             id="checkInTime"
                                             editable="false"
@@ -468,6 +474,33 @@
                                             value="{gpData>/CHECKOUT_TIME}"
                                             editable="false"
                                         />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="GatePass Type">
+                                    <f:fields>
+                                        <!-- <Input
+                                            id='GPType'
+                                            value="{gpData>/GP_Type}"
+                                            editable="false"
+                                        /> -->
+                                        <Select
+                                            id="GPType"
+                                            selectedKey="{gpData>/GP_Type}"
+                                            editable="true"
+                                            change="onGPSelectChange"
+                                        >
+                                            <items>
+                                                <core:Item
+                                                    text="Inward"
+                                                    key="Inward"
+                                                />
+                                                <core:Item
+                                                    text="Outward"
+                                                    key="Outward"
+                                                />
+                                               
+                                            </items>
+                                        </Select>
                                     </f:fields>
                                 </f:FormElement>
                             </f:formElements>
