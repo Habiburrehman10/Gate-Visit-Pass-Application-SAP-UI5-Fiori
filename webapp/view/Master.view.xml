@@ -308,6 +308,7 @@
                                             suggestionItems="{path: 'F4data>/SUPPLIER'}"
                                             editable="true"
                                             required="true"
+                                            
                                         >
                                             <suggestionItems>
                                                 <core:Item
@@ -330,7 +331,7 @@
                                             valueHelpRequest="customerFragment"
                                             suggestionItems="{path: 'F4data>/CUSTOMER'}"
                                             editable="true"
-                                            required="true"
+                                            
                                         >
                                             <suggestionItems>
                                                 <core:Item

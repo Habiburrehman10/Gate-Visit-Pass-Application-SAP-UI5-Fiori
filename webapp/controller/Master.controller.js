@@ -329,6 +329,13 @@ sap.ui.define([
 
                 debugger;
                 this.getView().byId("refDocNum").setValue("");
+                let selectedKey = this.getView().byId("referencesType").getSelectedKey();
+                var suppNo = this.getView().byId("supplierNumber");
+                if (selectedKey === 'PO') {
+                    suppNo.setRequired(true);
+                } else {
+                    suppNo.setRequired(false);
+                }
 
 
             },
@@ -375,10 +382,10 @@ sap.ui.define([
 
                         }
 
-                        if(that.newGateDialog1){
+                        if (that.newGateDialog1) {
                             that.newGateDialog1.destroy();
                             that.newGateDialog1 = null;
-                            }
+                        }
 
 
                         if (!that.newGateDialog1) {
@@ -467,10 +474,10 @@ sap.ui.define([
                                 that.lineItem.ITEMS = JSON.parse(response.Value);
                                 console.log(that.lineItem.ITEMS);
 
-                                if(that.newRefdocDialog1){
+                                if (that.newRefdocDialog1) {
                                     that.newRefdocDialog1.destroy();
                                     that.newRefdocDialog1 = null;
-                                    }
+                                }
 
                                 if (!that.newRefdocDialog1) {
 
@@ -507,10 +514,10 @@ sap.ui.define([
                                 that.lineItem.ITEMS = JSON.parse(response.Value);
                                 console.log(that.lineItem.ITEMS);
 
-                                if(that.newRefdocDialog2){
+                                if (that.newRefdocDialog2) {
                                     that.newRefdocDialog2.destroy();
                                     that.newRefdocDialog2 = null;
-                                    }
+                                }
 
                                 if (!that.newRefdocDialog2) {
 
@@ -545,10 +552,10 @@ sap.ui.define([
                                 that.lineItem.ITEMS = JSON.parse(response.Value);
                                 console.log(that.lineItem.ITEMS);
 
-                                if(that.newRefdocDialog3){
+                                if (that.newRefdocDialog3) {
                                     that.newRefdocDialog3.destroy();
                                     that.newRefdocDialog3 = null;
-                                    }
+                                }
 
                                 if (!that.newRefdocDialog3) {
 
@@ -848,12 +855,13 @@ sap.ui.define([
                         var sTimeOut = oModel.getProperty("/TIMEOUT");
                         var sReasonMt = oModel.getProperty("/REASON_MT");
 
-                        // var btnChkOut = that.getView().byId("btnChkOut");
-                        // if (sCheckOutDate === undefined && sCheckOutTime === undefined) {
-                        //     btnChkOut.setVisible(true);
-                        // } else {
-                        //     btnChkOut.setVisible(false);
-                        // }
+
+                        var suppNo = that.getView().byId("supplierNumber");
+                        if (sReftype === 'PO') {
+                            suppNo.setRequired(true);
+                        } else {
+                            suppNo.setRequired(false);
+                        }
 
                         var btnChkOut = that.getView().byId("btnChkOut");
                         if (sDateIn === undefined && sTimeIn === undefined) {
@@ -1075,8 +1083,9 @@ sap.ui.define([
                 let rb1Val = event.getSource().getSelected();
 
 
+
                 setTimeout(() => {
-                    
+
                     if (rb1Val === true) {
                         // Handle logic for radio button 1 select
 
@@ -1102,21 +1111,26 @@ sap.ui.define([
                                 // let selectedKey = gpDataModel.getProperty("/REF_TYPE");
 
                                 //     console.log("Selected Key:", selectedKey);
+                                var suppNo = this.getView().byId("supplierNumber");
 
                                 switch (selectedKey) {
                                     case "PO":
 
                                         gpDataModel.setProperty("/REF_TYPE", "PO");
+                                        suppNo.setRequired(true);
                                         break;
                                     case "SHIP":
 
                                         gpDataModel.setProperty("/REF_TYPE", "SHIP");
+                                        suppNo.setRequired(false);
                                         break;
                                     case "GP":
                                         gpDataModel.setProperty("/REF_TYPE", "GP");
+                                        suppNo.setRequired(false);
                                         break;
                                     case "OT":
                                         gpDataModel.setProperty("/REF_TYPE", "OT");
+                                        suppNo.setRequired(false);
                                         break;
                                     default:
                                         console.warn("Unexpected selected key:", selectedKey);
@@ -1124,25 +1138,6 @@ sap.ui.define([
                                         break;
                                 }
                             }
-
-
-                            //     // let selectedKey = this.getView().byId("referencesType").getSelectedKey();
-                            //     if (selectedKey === 'PO' || selectedKey === "GP" || selectedKey === "SHIP") {
-                            //         var oModel = this.getView().getModel("lineItemModel1");
-                            //         if (oModel) {
-                            //             debugger;
-                            //             // var oModel = this.getView().getModel("lineItemModel");
-                            //             var oItems = oModel.getData().ITEMS;
-                            //             if (oItems) {
-                            //                 oItems.length = 0;
-
-                            //                 // Set the modified data back to the model
-                            //                 oModel.setData(oItems);
-                            //                 oModel.refresh(true);
-                            //             }
-                            //         }
-                            //     }
-                            // } else {
 
                         }
                     }
@@ -1152,11 +1147,11 @@ sap.ui.define([
             counted: 0,
             onRb2Select: function (event) {
                 debugger;
-                
+
                 let selectedKey;
                 let rb2Val = event.getSource().getSelected();
                 setTimeout(() => {
-                    
+
                     if (rb2Val === true) {
                         // Handle logic for radio button 2 select
 
@@ -1186,22 +1181,28 @@ sap.ui.define([
                                 }
 
                                 console.log("Selected Key:", selectedKey);
+                                var suppNo = this.getView().byId("supplierNumber");
                                 // if(selectedKey === selectedKey1){
 
                                 switch (selectedKey) {
                                     case "PO":
 
                                         gpDataModel.setProperty("/REF_TYPE", "PO");
+                                        suppNo.setRequired(true);
+
                                         break;
                                     case "SHIP":
 
                                         gpDataModel.setProperty("/REF_TYPE", "SHIP");
+                                        suppNo.setRequired(false);
                                         break;
                                     case "GP":
                                         gpDataModel.setProperty("/REF_TYPE", "GP");
+                                        suppNo.setRequired(false);
                                         break;
                                     case "OT":
                                         gpDataModel.setProperty("/REF_TYPE", "OT");
+                                        suppNo.setRequired(false);
                                         break;
                                     default:
                                         console.warn("Unexpected selected key:", selectedKey);
@@ -1535,25 +1536,30 @@ sap.ui.define([
                     VehicleNobyid.setValueState(ValueState.None);
                 }
 
-                var SupplierNumberbyid = this.getView().byId("supplierNumber");
-                var SupplierNumber = SupplierNumberbyid.getValue();
-                if (SupplierNumber === '') {
-                    SupplierNumberbyid.setValueState(ValueState.Error);
-                    MessageToast.show("Please Add Supplier Number!");
-                    return false;
-                } else {
-                    SupplierNumberbyid.setValueState(ValueState.None);
+                var refType = this.getView().byId("referencesType").getSelectedKey();
+                var suppNo = this.getView().byId("supplierNumber");
+                if (refType === 'PO') {
+                    var SupplierNumberbyid = this.getView().byId("supplierNumber");
+                    var SupplierNumber = SupplierNumberbyid.getValue();
+                    if (SupplierNumber === '') {
+                        SupplierNumberbyid.setValueState(ValueState.Error);
+                        MessageToast.show("Please Add Supplier Number!");
+                        return false;
+                    } else {
+                        SupplierNumberbyid.setValueState(ValueState.None);
+                    }
+                    suppNo.setRequired(true);
                 }
 
-                var CustomerNumberbyid = this.getView().byId("customerNumber");
-                var CustomerNumber = CustomerNumberbyid.getValue();
-                if (CustomerNumber === '') {
-                    CustomerNumberbyid.setValueState(ValueState.Error);
-                    MessageToast.show("Please Add Customer Number!");
-                    return false;
-                } else {
-                    CustomerNumberbyid.setValueState(ValueState.None);
-                }
+                // var CustomerNumberbyid = this.getView().byId("customerNumber");
+                // var CustomerNumber = CustomerNumberbyid.getValue();
+                // if (CustomerNumber === '') {
+                //     CustomerNumberbyid.setValueState(ValueState.Error);
+                //     MessageToast.show("Please Add Customer Number!");
+                //     return false;
+                // } else {
+                //     CustomerNumberbyid.setValueState(ValueState.None);
+                // }
 
                 var GateInchargebyid = this.getView().byId("GATE_INCHARGE");
                 var GateIncharge = GateInchargebyid.getValue();
