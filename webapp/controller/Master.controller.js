@@ -513,10 +513,15 @@ sap.ui.define([
 
                         Key: 'SHIP'
                     }
+                } else if (selectedKey === 'OT') {
+                    var object = {
+
+                        Key: 'OT'
+                    }
                 }
 
 
-                if (object.Key) {
+                if (object.Key == 'SHIP' || object.Key == 'PO' || object.Key == 'GP') {
 
 
                     datamanager.getF4HelpData(object, function (response) {
@@ -649,6 +654,8 @@ sap.ui.define([
 
                         }
                     })
+                } else {
+                    MessageToast.show("No Help Available For Other.");
                 }
 
 
@@ -971,7 +978,8 @@ sap.ui.define([
                         that.getView().byId("chkCityOffice").setSelected(sCityoffice);
                         that.getView().byId("chkReturnable").setSelected(sReturnable);
                         that.getView().byId("refDocNum").setValue(sRefDoc);
-                        that.getView().byId("referencesType").setValue(sReftype);
+                        // that.getView().byId("referencesType").setValue(sReftype);
+                        that.getView().byId("referencesType").setSelectedKey(sReftype);
                         that.getView().byId("DRIVER_NAME").setValue(sDriverName);
                         that.getView().byId("DRIVER_NIC").setValue(sDriverNic);
                         that.getView().byId("DRIVER_CONTACT").setValue(sDriverContact);
@@ -1493,15 +1501,15 @@ sap.ui.define([
                         oItem.getCells().forEach(function (oCell) {
                             if (oCell instanceof sap.m.Text) {
                                 debugger;
-                                if(selectedKey == 'PO' || selectedKey == 'SHIP'){
-                                   var result = oCell.sId;
-                                   if (result.includes('MENGE') || result.includes('LAUFK')){
-                                    Toast = true;
-                                   }
-                                }else if(selectedKey == 'OT'){
+                                if (selectedKey == 'PO' || selectedKey == 'SHIP') {
+                                    var result = oCell.sId;
+                                    if (result.includes('MENGE') || result.includes('LAUFK')) {
+                                        Toast = true;
+                                    }
+                                } else if (selectedKey == 'OT') {
                                     Toast = true;
                                 }
-                                
+
                                 return;
 
 
@@ -1557,7 +1565,7 @@ sap.ui.define([
             //     }
             // },
 
-            
+
 
 
             onEditRow: function () {
@@ -1615,6 +1623,7 @@ sap.ui.define([
                                 value: oQuantityCell.getText(), // Set the initial value from the text
                                 width: "100%", // Set the width as needed
                                 change: that.onRefInputChange.bind(that)
+
                             });
                             // Replace the Text control with the Input control at the correct index
                             var quantityIndex = oCells.indexOf(oQuantityCell);
@@ -1636,6 +1645,9 @@ sap.ui.define([
                         });
                     }
                 });
+                if(selectedKey == 'GP'){
+                    MessageToast.show("Not Allowed For GatePass Doc.")
+                }
             },
 
 
@@ -1952,6 +1964,35 @@ sap.ui.define([
                         } else {
 
 
+
+
+                            // Get the current data from the model
+                            var currentData = oModel.getData();
+
+                            // Iterate over each entry in newData
+                            var selectedKey = this.getView().byId("referencesType").getSelectedKey();
+                            if (selectedKey == 'PO' || selectedKey == 'SHIP') {
+                                Object.keys(that.updatedData).forEach(function (rowno) {
+                                    debugger;
+                                    var newValue = that.updatedData[rowno];
+                                    // Update the corresponding record in currentData
+                                    var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                                    if (record) {
+                                        // Update the quantity field with newValue
+                                        if (selectedKey == 'PO') {
+                                            record.MENGE = parseInt(newValue); // Adjust quantityField with the actual field name in your model
+                                        } else if (selectedKey == 'SHIP') {
+                                            record.LAUFK = parseInt(newValue);
+                                        }
+                                    }
+                                });
+
+                                // Set the updated data back to the model
+                                oModel.setData(currentData);
+                                that.updateData = {};
+                            }
+
+
                             if (oItems) {
                                 if (oItems.length !== 0) {
                                     that.objPostData.ITEMS = [];
@@ -2020,7 +2061,7 @@ sap.ui.define([
                                         MessageToast.show("Please Edit your Gatepass!")
 
                                     } else {
-                                        if (this.isEditMode === true && Ref_Type === "OT") {
+                                        if (this.isEditMode === true && (Ref_Type === "OT" || Ref_Type === "PO" || Ref_Type === "SHIP")) {
                                             MessageToast.show("Please Save the Table records!");
                                         } else if (this.hide === false) {
 
@@ -2169,10 +2210,10 @@ sap.ui.define([
             },
 
 
-            validateInput :function (cell, newValue, originalValue) {
+            validateInput: function (cell, newValue, originalValue) {
                 // Check if the new value is different from the original value
                 debugger;
-                if (newValue !== originalValue) {
+                if (parseInt(newValue) !== originalValue) {
                     // Check if the new value is greater than the original value
                     if (parseFloat(newValue) > parseFloat(originalValue)) {
                         // Show error message and set field state to error
@@ -2189,11 +2230,18 @@ sap.ui.define([
                     cell.setValueState(sap.ui.core.ValueState.None); // Clear error state
                 }
             },
-            
 
 
 
-            quantity : 0,
+            updatedData: {},
+
+            // Function to update the locally stored data
+            updateDataLocally: function (recordId, newValue) {
+                debugger;
+                this.updatedData[recordId] = newValue;
+            },
+
+            quantity: 0,
             onRefInputChange: function (oEvent) {
                 debugger;
                 var selectedKey = this.getView().byId("referencesType").getSelectedKey();
@@ -2214,6 +2262,11 @@ sap.ui.define([
                     sModelName = "lineItemModel";
                     sPath = oRow.getBindingContext("lineItemModel").getPath(); // Get the path of the item
                     oModel = this.getView().getModel("lineItemModel"); // Get the model
+                } else if (oTable.mBindingInfos.items.model === 'GPDetailsModel') {
+                    // For 'PO' and 'SHIP' cases
+                    sModelName = "GPDetailsModel";
+                    sPath = oRow.getBindingContext("GPDetailsModel").getPath(); // Get the path of the item
+                    oModel = this.getView().getModel("GPDetailsModel"); // Get the model
                 }
 
                 var aItems = oModel.getProperty(sPath); // Get the ITEMS array
@@ -2235,35 +2288,41 @@ sap.ui.define([
                             break;
                         case 4:
 
-                                var table = this.getView().byId("ItemData");
-                                var rows = table.getItems();
-                                var oModel = this.getView().getModel("lineItemModel");
-                                var oItem = oModel.getProperty(sPath);
-                                var that = this;
+                            var table = this.getView().byId("ItemData");
+                            var rows = table.getItems();
+                            // var oModel = this.getView().getModel("lineItemModel");
+                            var oItem = oModel.getProperty(sPath);
+                            var that = this;
 
-                                rows.forEach(function (row) {
-                                    debugger;
-                                    var cells = row.getCells();
-                                    var ro = row.sId;
-                                    var rowCount = ro.charAt(ro.length - 1);
-                                    var path = sPath.charAt(sPath.length - 1);
-                                    if (rowCount == path){
+                            rows.forEach(function (row) {
+                                debugger;
+                                var cells = row.getCells();
+                                var ro = row.sId;
+                                var rowCount = ro.charAt(ro.length - 1);
+                                var path = sPath.charAt(sPath.length - 1);
+                                if (rowCount == path) {
                                     cells.forEach(function (cell) {
                                         debugger;
                                         // if(cell.mProperties.text == sPath.charAt(sPath.length - 1)){
                                         if (cell instanceof sap.m.Input) { // Check if the cell is an input field
-                                            var originalValue = oItem.MENGE;
-                                            var newValue = cell.getValue()
-                                
-                                            that.validateInput(cell,newValue,originalValue);
+                                            if (sModelName == 'GPDetailsModel') {
+                                                var originalValue = oItem.QUANTITY;
+                                            } else if (sModelName == 'lineItemModel') {
+                                                var originalValue = oItem.MENGE;
+                                            }
 
-                                           
+                                            var newValue = cell.getValue()
+
+                                            that.validateInput(cell, newValue, originalValue);
+                                            that.updateDataLocally(path, newValue);
+
+
                                         }
-                                 
+
                                     });
                                 }
-                                });
-                                
+                            });
+
                             break;
                         case 5:
                             oItem.MEINS = sNewValue;
@@ -2282,34 +2341,39 @@ sap.ui.define([
                             break;
                         case 4:
 
-                        var table = this.getView().byId("ItemData");
-                        var rows = table.getItems();
-                        var oModel = this.getView().getModel("lineItemModel");
-                        var oItem = oModel.getProperty(sPath);
-                        var that = this;
+                            var table = this.getView().byId("ItemData");
+                            var rows = table.getItems();
+                            // var oModel = this.getView().getModel("lineItemModel");
+                            var oItem = oModel.getProperty(sPath);
+                            var that = this;
 
-                        rows.forEach(function (row) {
-                            debugger;
-                            var cells = row.getCells();
-                            var ro = row.sId;
-                            var rowCount = ro.charAt(ro.length - 1);
-                            var path = sPath.charAt(sPath.length - 1);
-                            if (rowCount == path){
-                            cells.forEach(function (cell) {
+                            rows.forEach(function (row) {
                                 debugger;
-                                // if(cell.mProperties.text == sPath.charAt(sPath.length - 1)){
-                                if (cell instanceof sap.m.Input) { // Check if the cell is an input field
-                                    var originalValue = oItem.LAUFK;
-                                    var newValue = cell.getValue()
-                        
-                                    that.validateInput(cell,newValue,originalValue);
+                                var cells = row.getCells();
+                                var ro = row.sId;
+                                var rowCount = ro.charAt(ro.length - 1);
+                                var path = sPath.charAt(sPath.length - 1);
+                                if (rowCount == path) {
+                                    cells.forEach(function (cell) {
+                                        debugger;
+                                        // if(cell.mProperties.text == sPath.charAt(sPath.length - 1)){
+                                        if (cell instanceof sap.m.Input) { // Check if the cell is an input field
+                                            if (sModelName == 'GPDetailsModel') {
+                                                var originalValue = oItem.QUANTITY;
+                                            } else if (sModelName == 'lineItemModel') {
+                                                var originalValue = oItem.LAUFK;
+                                            }
+                                            var newValue = cell.getValue()
 
-                                   
+                                            that.validateInput(cell, newValue, originalValue);
+                                            that.updateDataLocally(path, newValue);
+
+
+                                        }
+
+                                    });
                                 }
-                         
                             });
-                        }
-                        });
                             // oItem.LAUFK = sNewValue;
                             break;
                         case 5:
@@ -2522,6 +2586,44 @@ sap.ui.define([
                     } else {
 
 
+                        var selectedKey = this.getView().byId("referencesType").getSelectedKey();
+
+                        if (selectedKey == 'PO' || selectedKey == 'SHIP') {
+                            debugger;
+                            var oModel = this.getView().getModel("GPDetailsModel");
+                            if (!oModel) {
+                                var oModel1 = this.getView().getModel("lineItemModel");
+                                var currentData = oModel1.getData();
+                            } else {
+                                var currentData = oModel.getData();
+                            }
+
+                            Object.keys(that.updatedData).forEach(function (rowno) {
+                                debugger;
+                                var newValue = that.updatedData[rowno];
+                                // Update the corresponding record in currentData
+                                var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                                if (record) {
+                                    // Update the quantity field with newValue
+                                    if (selectedKey == 'PO' && oModel1) {
+                                        record.MENGE = parseInt(newValue); // Adjust quantityField with the actual field name in your model
+                                    } else if (selectedKey == 'PO' && oModel) {
+                                        record.QUANTITY = parseInt(newValue); // Adjust quantityField with the actual field name in your model
+                                    }
+                                    else if (selectedKey == 'SHIP' && oModel1) {
+                                        record.LAUFK = parseInt(newValue);
+                                    } else if (selectedKey == 'SHIP' && oModel) {
+                                        record.QUANTITY = parseInt(newValue); // Adjust quantityField with the actual field name in your model
+                                    }
+                                }
+                            });
+
+                            // Set the updated data back to the model
+                            oModel.setData(currentData);
+                            that.updatedData = {};
+                        }
+
+
 
                         that.objPostData.ITEMS = [];
                         if (Ref_Type === "PO" && this.check == 0) {
@@ -2601,7 +2703,7 @@ sap.ui.define([
 
                         // this.getView().getModel('lineItemModel').refresh(true);
                         var console1 = 0;
-                        if (this.isEditMode === true && Ref_Type === "OT") {
+                        if (this.isEditMode === true && (Ref_Type === "OT" || Ref_Type === "PO" || Ref_Type === "SHIP")) {
                             MessageToast.show("Please Save the Table records!");
                         } else {
                             debugger;
