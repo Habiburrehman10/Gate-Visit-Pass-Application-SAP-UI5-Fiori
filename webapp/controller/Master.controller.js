@@ -168,7 +168,7 @@ sap.ui.define([
                     var oContext = oItem.getBindingContext("lineItemModel");
                 }
 
-                if (oItem && selectedKey === "OT") {
+                if (oItem && selectedKey === "OT" || oItem && selectedKey === "PO" || oItem && selectedKey === "SHIP") {
                     // Get the binding context of the item
 
 
@@ -189,7 +189,7 @@ sap.ui.define([
                         MessageToast.show("Row deleted!");
                     }
                 } else {
-                    MessageToast.show("Not allowed for Reference Doc");
+                    MessageToast.show("Not allowed for GatePass Doc");
                 }
             },
 
@@ -923,12 +923,12 @@ sap.ui.define([
                         var sTitle = that.getView().byId("Title1");
                         if (sGPType === "Inward") {
                             sTitle.setProperty("text", "InWard GatePass Selection");
-                        }else if(sGPType === "Outward"){
+                        } else if (sGPType === "Outward") {
                             sTitle.setProperty("text", "OutWard GatePass Selection");
                         }
 
 
-                    
+
 
 
                         var suppNo = that.getView().byId("supplierNumber");
@@ -1484,7 +1484,7 @@ sap.ui.define([
                 debugger;
                 var that = this;
                 let selectedKey = this.getView().byId("referencesType").getSelectedKey();
-                if (selectedKey == 'OT') {
+                if (selectedKey == 'OT' || selectedKey == 'PO' || selectedKey == 'SHIP') {
                     var oTable = this.getView().byId("ItemData");
                     var aItems = oTable.getItems();
                     aItems.forEach(function (oItem) {
@@ -1493,17 +1493,15 @@ sap.ui.define([
                         oItem.getCells().forEach(function (oCell) {
                             if (oCell instanceof sap.m.Text) {
                                 debugger;
-                                // var oInput = new sap.m.Input({
-                                //     value: oCell.getText(), // Set the initial value from the text
-                                //     width: "100%" // Set the width as needed
-
-                                // });
-
-
-                                // // Replace the Text control with the Input control
-                                // oItem.removeCell(oCell);
-                                // oItem.addCell(oInput);
-                                Toast = true;
+                                if(selectedKey == 'PO' || selectedKey == 'SHIP'){
+                                   var result = oCell.sId;
+                                   if (result.includes('MENGE') || result.includes('LAUFK')){
+                                    Toast = true;
+                                   }
+                                }else if(selectedKey == 'OT'){
+                                    Toast = true;
+                                }
+                                
                                 return;
 
 
@@ -1527,36 +1525,69 @@ sap.ui.define([
                 }
             },
 
+
             // onEditRow: function () {
             //     debugger;
+            //     var that = this;
             //     let selectedKey = this.getView().byId("referencesType").getSelectedKey();
             //     if (selectedKey == 'OT') {
             //         var oTable = this.getView().byId("ItemData");
-
-            //         // Iterate through the items in the table and disable input fields
             //         var aItems = oTable.getItems();
             //         aItems.forEach(function (oItem) {
             //             oItem.getCells().forEach(function (oCell) {
-            //                 // if (oCell instanceof sap.m.Input) {
-            //                 oCell.setEnabled(true);
-            //                 // }
+            //                 if (oCell instanceof sap.m.Text) {
+            //                     var oInput = new sap.m.Input({
+            //                         value: oCell.getText(), // Set the initial value from the text
+            //                         width: "100%",// Set the width as needed
+            //                         change: that.onInputChange.bind(that)
+            //                     });
+            //                     // Replace the Text control with the Input control
+            //                     oItem.removeCell(oCell);
+            //                     oItem.addCell(oInput);
+            //                     that.isEditMode = true;
+            //                 } else if (oCell instanceof sap.m.Input) {
+            //                     // Enable the input fields
+            //                     oCell.setEnabled(true);
+            //                     that.isEditMode = true;
+            //                 }
             //             });
-
-
-            //         })
+            //         });
             //     } else {
             //         MessageToast.show("Not allowed for Reference Doc");
             //     }
             // },
 
+            
+
+
             onEditRow: function () {
                 debugger;
                 var that = this;
+
+                // Get the selected key
                 let selectedKey = this.getView().byId("referencesType").getSelectedKey();
-                if (selectedKey == 'OT') {
-                    var oTable = this.getView().byId("ItemData");
-                    var aItems = oTable.getItems();
-                    aItems.forEach(function (oItem) {
+
+                var oTable = this.getView().byId("ItemData");
+                var aItems = oTable.getItems();
+                aItems.forEach(function (oItem) {
+                    var oCells = oItem.getCells();
+                    var oQuantityCell = oCells[4];
+
+
+                    // Check the selected key
+                    // if (selectedKey == 'OT') {
+                    //     // For 'OT' case, make all fields editable
+                    //     oCells.forEach(function (oCell) {
+                    //         if (oCell instanceof sap.m.Input) {
+                    //             oCell.setEnabled(true);
+                    //             that.isEditMode = true;
+                    //         }
+                    //     });
+
+                    if (selectedKey == 'OT') {
+                        // var oTable = this.getView().byId("ItemData");
+                        // var aItems = oTable.getItems();
+                        // aItems.forEach(function (oItem) {
                         oItem.getCells().forEach(function (oCell) {
                             if (oCell instanceof sap.m.Text) {
                                 var oInput = new sap.m.Input({
@@ -1574,11 +1605,43 @@ sap.ui.define([
                                 that.isEditMode = true;
                             }
                         });
-                    });
-                } else {
-                    MessageToast.show("Not allowed for Reference Doc");
-                }
+                        // });
+
+
+                    } else if (selectedKey == 'PO' || selectedKey == 'SHIP') {
+                        // For 'PO' and 'SHIP' cases, make only the quantity field editable
+                        if (oQuantityCell instanceof sap.m.Text) {
+                            var oInput = new sap.m.Input({
+                                value: oQuantityCell.getText(), // Set the initial value from the text
+                                width: "100%", // Set the width as needed
+                                change: that.onRefInputChange.bind(that)
+                            });
+                            // Replace the Text control with the Input control at the correct index
+                            var quantityIndex = oCells.indexOf(oQuantityCell);
+                            oItem.removeCell(oQuantityCell);
+                            oItem.insertCell(oInput, quantityIndex);
+                            that.isEditMode = true;
+                        } else if (oQuantityCell instanceof sap.m.Input) {
+                            // Enable the input field
+                            oQuantityCell.setEnabled(true);
+                            that.isEditMode = true;
+                        }
+                        // Disable other fields
+                        oCells.forEach(function (oCell) {
+                            if (oCell !== oQuantityCell) {
+                                if (oCell instanceof sap.m.Input) {
+                                    oCell.setEnabled(false);
+                                }
+                            }
+                        });
+                    }
+                });
             },
+
+
+
+
+
 
 
             Validator: function () {
@@ -2104,6 +2167,165 @@ sap.ui.define([
                     this.getView().setModel(new sap.ui.model.json.JSONModel({ ITEMS: data.ITEMS }), "lineItemModel");
                 }
             },
+
+
+            validateInput :function (cell, newValue, originalValue) {
+                // Check if the new value is different from the original value
+                debugger;
+                if (newValue !== originalValue) {
+                    // Check if the new value is greater than the original value
+                    if (parseFloat(newValue) > parseFloat(originalValue)) {
+                        // Show error message and set field state to error
+                        sap.m.MessageToast.show("New value cannot be greater than the original value.");
+                        cell.setValueState(sap.ui.core.ValueState.Error);
+                    } else {
+                        // Clear error state if the value is valid
+                        cell.setValueState(sap.ui.core.ValueState.None);
+                    }
+                } else {
+                    // Reset the field to its original state if the user re-enters the original value
+                    cell.setValue(originalValue);
+                    this.quantity = newValue;
+                    cell.setValueState(sap.ui.core.ValueState.None); // Clear error state
+                }
+            },
+            
+
+
+
+            quantity : 0,
+            onRefInputChange: function (oEvent) {
+                debugger;
+                var selectedKey = this.getView().byId("referencesType").getSelectedKey();
+                var sNewValue = oEvent.getParameter("value"); // Get the new value from the input field
+                var oInput = oEvent.getSource(); // Get the input field control
+                var oRow = oInput.getParent(); // Get the parent row of the input field
+                var oTable = oRow.getParent(); // Get the table containing the row
+                var iColumnIndex = oRow.indexOfCell(oInput); // Get the column index of the input field within the row
+
+                var sModelName;
+                var sPath;
+                var aItems;
+                var oModel;
+
+                // Determine the model and path based on the table's model
+                if (oTable.mBindingInfos.items.model === 'lineItemModel') {
+                    // For 'PO' and 'SHIP' cases
+                    sModelName = "lineItemModel";
+                    sPath = oRow.getBindingContext("lineItemModel").getPath(); // Get the path of the item
+                    oModel = this.getView().getModel("lineItemModel"); // Get the model
+                }
+
+                var aItems = oModel.getProperty(sPath); // Get the ITEMS array
+
+                // Update the corresponding property of the item
+                // var iRowIndex = parseInt(sPath.split("/").pop()); // Extract the index of the row
+                var oItem = aItems; // Get the item object corresponding to the row
+                // Update the property value based on the column index
+                if (selectedKey === 'PO') {
+                    switch (iColumnIndex) {
+                        case 1:
+                            oItem.EBELN = sNewValue;
+                            break;
+                        case 2:
+                            oItem.MATNR = sNewValue;
+                            break;
+                        case 3:
+                            oItem.MAKTX = sNewValue;
+                            break;
+                        case 4:
+
+                                var table = this.getView().byId("ItemData");
+                                var rows = table.getItems();
+                                var oModel = this.getView().getModel("lineItemModel");
+                                var oItem = oModel.getProperty(sPath);
+                                var that = this;
+
+                                rows.forEach(function (row) {
+                                    debugger;
+                                    var cells = row.getCells();
+                                    var ro = row.sId;
+                                    var rowCount = ro.charAt(ro.length - 1);
+                                    var path = sPath.charAt(sPath.length - 1);
+                                    if (rowCount == path){
+                                    cells.forEach(function (cell) {
+                                        debugger;
+                                        // if(cell.mProperties.text == sPath.charAt(sPath.length - 1)){
+                                        if (cell instanceof sap.m.Input) { // Check if the cell is an input field
+                                            var originalValue = oItem.MENGE;
+                                            var newValue = cell.getValue()
+                                
+                                            that.validateInput(cell,newValue,originalValue);
+
+                                           
+                                        }
+                                 
+                                    });
+                                }
+                                });
+                                
+                            break;
+                        case 5:
+                            oItem.MEINS = sNewValue;
+                            break;
+                    }
+                } else if (selectedKey === 'SHIP') {
+                    switch (iColumnIndex) {
+                        case 1:
+                            oItem.TKNUM = sNewValue;
+                            break;
+                        case 2:
+                            oItem.VBELN = sNewValue;
+                            break;
+                        case 3:
+                            oItem.SHTYP = sNewValue;
+                            break;
+                        case 4:
+
+                        var table = this.getView().byId("ItemData");
+                        var rows = table.getItems();
+                        var oModel = this.getView().getModel("lineItemModel");
+                        var oItem = oModel.getProperty(sPath);
+                        var that = this;
+
+                        rows.forEach(function (row) {
+                            debugger;
+                            var cells = row.getCells();
+                            var ro = row.sId;
+                            var rowCount = ro.charAt(ro.length - 1);
+                            var path = sPath.charAt(sPath.length - 1);
+                            if (rowCount == path){
+                            cells.forEach(function (cell) {
+                                debugger;
+                                // if(cell.mProperties.text == sPath.charAt(sPath.length - 1)){
+                                if (cell instanceof sap.m.Input) { // Check if the cell is an input field
+                                    var originalValue = oItem.LAUFK;
+                                    var newValue = cell.getValue()
+                        
+                                    that.validateInput(cell,newValue,originalValue);
+
+                                   
+                                }
+                         
+                            });
+                        }
+                        });
+                            // oItem.LAUFK = sNewValue;
+                            break;
+                        case 5:
+                            oItem.DTMEG = sNewValue;
+                            break;
+                    }
+                }
+
+                // Set the updated array back to the model
+                oModel.setProperty(sPath, aItems);
+
+                // Refresh the model to reflect the changes in the UI
+                oModel.refresh(true);
+            },
+
+
 
             isPropertyPresent: function (array, propertyName) {
                 for (var i = 0; i < array.length; i++) {
