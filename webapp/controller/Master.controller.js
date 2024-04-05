@@ -76,11 +76,73 @@ sap.ui.define([
 
                 let that = this;
 
+                this.getView().addEventDelegate({
+                    onAfterShow: jQuery.proxy(this.showMsgbox, this)
+                });
 
 
 
 
                 debugger;
+                // sap.m.MessageBox.show("Select Gate Pass Type", {
+                //     icon: sap.m.MessageBox.Icon.NONE,
+                //     title: "Gate Pass",
+                //     // actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.OUTWARD],
+                //     actions: ["Inward", "Outward"],
+                //     onClose: function (oAction) {
+                //         if (oAction === "Inward") {
+                //             debugger;
+                //             // var oComponent = that.getOwnerComponent();
+
+                //             var sTitle = that.getView().byId("Title1");
+                //             var GPType = that.getView().byId("GPType");
+
+
+                //             sTitle.setProperty("text", "InWard GatePass Selection");
+                //             GPType.setValue("Inward");
+
+
+                //         } else if (oAction === "Outward") {
+                //             debugger;
+
+                //             var sTitle = that.getView().byId("Title1");
+                //             var GPType = that.getView().byId("GPType");
+
+
+                //             sTitle.setProperty("text", "OutWard GatePass Selection");
+                //             GPType.setValue("Outward");
+
+
+
+                //         }
+                //     }
+                // });
+
+
+
+                var sImagePath = sap.ui.require.toUrl("gatepass/gatepass/Images/TMCLogo_favicon.png");
+                this.getView().byId("MasterImage").setSrc(sImagePath);
+
+                //set model in view initially with object containing fields
+                var oModelPost = new JSONModel(this.objPostData);
+                this.getView().setModel(oModelPost, "gpData");
+
+                // datamanager.getF4HelpData(function (response) {
+
+                //     //set response data in global object
+                //     that.searchResponse.data = response.results;
+
+                // }, function (error) {
+                //     console.log(error);
+                // });
+
+                var oTable = this.getView().byId("ItemData");
+                oTable.attachDelete(this.onDeleteRow.bind(this));
+
+            },
+
+            showMsgbox : function(){
+                var that = this;
                 sap.m.MessageBox.show("Select Gate Pass Type", {
                     icon: sap.m.MessageBox.Icon.NONE,
                     title: "Gate Pass",
@@ -114,28 +176,6 @@ sap.ui.define([
                         }
                     }
                 });
-
-
-
-                var sImagePath = sap.ui.require.toUrl("gatepass/gatepass/Images/TMCLogo_favicon.png");
-                this.getView().byId("MasterImage").setSrc(sImagePath);
-
-                //set model in view initially with object containing fields
-                var oModelPost = new JSONModel(this.objPostData);
-                this.getView().setModel(oModelPost, "gpData");
-
-                // datamanager.getF4HelpData(function (response) {
-
-                //     //set response data in global object
-                //     that.searchResponse.data = response.results;
-
-                // }, function (error) {
-                //     console.log(error);
-                // });
-
-                var oTable = this.getView().byId("ItemData");
-                oTable.attachDelete(this.onDeleteRow.bind(this));
-
             },
 
 
@@ -847,6 +887,7 @@ sap.ui.define([
                     debugger;
                     datamanager.getGPDetails(oObject, function (response) {
                         debugger;
+                        
                         that.objPostData = JSON.parse(response.EvJson);
                         var oModelGPDetails = new sap.ui.model.json.JSONModel(that.objPostData);
 
@@ -1051,6 +1092,9 @@ sap.ui.define([
                     datamanager.getItemList(oObject, function (response) {
 
                         debugger;
+                        if(response.EvJson == "[]"){
+                            MessageToast.show("No Data Available");
+                        }
 
                         that.lineItem.ITEMS = JSON.parse(response.EvJson);
                         var oTable = that.getView().byId(that.createId("ItemData"));
