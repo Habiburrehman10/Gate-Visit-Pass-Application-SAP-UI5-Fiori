@@ -1838,10 +1838,10 @@ sap.ui.define([
                 return true;
             },
 
-
+            exceed : false,
             onCreateGP: function () {
                 debugger;
-
+                this.exceed = false;
                 let that = this;
                 //let itemArray = [];
 
@@ -1980,16 +1980,32 @@ sap.ui.define([
                                     if (record) {
                                         // Update the quantity field with newValue
                                         if (selectedKey == 'PO') {
-                                            record.MENGE = parseInt(newValue); // Adjust quantityField with the actual field name in your model
+                                            if(parseInt(newValue) > record.MENGE ){
+                                               that.exceed =true; 
+                                            }else{
+                                                record.MENGE = parseInt(newValue);
+                                            }
+                                            // Adjust quantityField with the actual field name in your model
                                         } else if (selectedKey == 'SHIP') {
-                                            record.LAUFK = parseInt(newValue);
+
+                                            if(parseInt(newValue) > record.LAUFK ){
+                                                that.exceed =true; 
+                                             }else{
+                                                 record.LAUFK = parseInt(newValue);
+                                             }
+                                            
                                         }
                                     }
                                 });
 
                                 // Set the updated data back to the model
                                 oModel.setData(currentData);
-                                that.updateData = {};
+                                
+                            }
+
+                            if (that.exceed) {
+                                sap.m.MessageToast.show("New value cannot be greater than the original quantity.");
+                                return; // Stop the execution of the function
                             }
 
 
@@ -2076,6 +2092,7 @@ sap.ui.define([
                                             this.getView().setModel(null, "lineItemModel1");
                                             this.onAction();
                                             this.isEditMode = '';
+                                            that.updateData = {};
                                         } else {
                                             var V1 = this.ValidatorForMT();
                                             if (V1 === true) {
@@ -2091,6 +2108,7 @@ sap.ui.define([
                                                 this.getView().setModel(null, "lineItemModel1");
                                                 this.onAction();
                                                 this.isEditMode = '';
+                                                that.updateData = {};
                                             }
 
                                         }
@@ -2419,15 +2437,15 @@ sap.ui.define([
                 this.getView().byId("checkOutTime").setValue(formatTime);
             },
 
-
+            exceededQuantity: false,
             updateData: function () {
                 debugger;
+                this.exceededQuantity = false;
                 this.editable = false;
                 let that = this;
                 this.getView().getModel('gpData').refresh(true);
                 var GPDetailsModel1 = this.getView().getModel("GPDetailsModel");
-                // var clonedData = JSON.parse(JSON.stringify(GPDetailsModel1.getData()));
-                // var GPDetailsModel2 = new sap.ui.model.json.JSONModel(clonedData);
+               
                 if (this.check == 1) {
                     let GPDetailsModel = this.getView().getModel("GPDetailsModel");
 
@@ -2454,15 +2472,105 @@ sap.ui.define([
                 var gpCreationData = this.getView().getModel('gpData').getData();
                 this.objPostData = gpCreationData;
                 var oModel = this.getView().getModel('lineItemModel');
+                debugger;
                 if (!oModel) {
                     var model = this.getView().getModel("GPDetailsModel");
+                    var currentData = model.getData(); // for updated data
                     var data = model.getData();
                     var oModel = this.getView().setModel(model, 'lineItemModel');
+                    var Ref_Type = this.objPostData.REF_TYPE;
+
+
+                    var arrayData = data.ITEMS;
+                    if (Ref_Type === "PO" && this.isPropertyPresent(arrayData, 'EBELN')) {
+                        // var model = this.getView().getModel("GPDetailsModel");
+                        // var data = model.getData();
+                        // var oModel = this.getView().setModel(model, 'lineItemModel');
+
+                        Object.keys(that.updatedData).forEach(function (rowno) {
+                            debugger;
+                            var newValue = that.updatedData[rowno];
+                            // Update the corresponding record in currentData
+                            var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                            if (record) {
+                                // Update the quantity field with newValue
+                                
+                                if(parseInt(newValue) > record.MENGE){
+                                    that.exceededQuantity = true;
+
+                                }else{
+                                    record.MENGE = parseInt(newValue);
+                                }// Adjust quantityField with the actual field name in your model
+                            }
+                        });
+
+
+
+                        this.getView().getModel('lineItemModel').setData(data);
+                       
+                    }  else if (Ref_Type === "SHIP" && this.isPropertyPresent(arrayData, 'TKNUM')) {
+                        // var model = this.getView().getModel("GPDetailsModel");
+                        // var data = model.getData();
+                        // var oModel = this.getView().setModel(model, 'lineItemModel');
+
+                        Object.keys(that.updatedData).forEach(function (rowno) {
+                            debugger;
+                            var newValue = that.updatedData[rowno];
+                            // Update the corresponding record in currentData
+                            var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                            if (record) {
+                                // Update the quantity field with newValue
+                               
+                                if(parseInt(newValue) > record.LAUFK){
+                                    that.exceededQuantity = true;
+
+                                }else{
+                                    record.LAUFK = parseInt(newValue);
+                                }
+                            }
+                                    
+                        });
+
+
+                        this.getView().getModel('lineItemModel').setData(data);
+                        
+                    }
+                    else if (Ref_Type === "SHIP"|| Ref_Type === "PO" && this.isPropertyPresent(arrayData, 'QUANTITY')) {
+                        debugger;
+                        // var model = this.getView().getModel("GPDetailsModel");
+                        // var data = model.getData();
+                        // var oModel = this.getView().setModel(model, 'lineItemModel');
+
+                        Object.keys(that.updatedData).forEach(function (rowno) {
+                            debugger;
+                            var newValue = that.updatedData[rowno];
+                            // Update the corresponding record in currentData
+                            var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                            if (record) {
+                                // Update the quantity field with newValue
+                               
+                                if(parseInt(newValue) > record.QUANTITY){
+                                    that.exceededQuantity = true;
+
+                                }else{
+                                    record.QUANTITY = parseInt(newValue);
+                                }
+                                   
+                                     
+                            }
+                        });
+
+
+                        this.getView().getModel('lineItemModel').setData(data);
+                        
+                    }
+
 
                     this.getView().getModel('lineItemModel').setData(data);
                     //    var oItems = this.getView().getModel('lineItemModel').getData().ITEMS;
                 }
                 else {
+                    var currentData = oModel.getData(); // for updated data
                     var Ref_Type = this.objPostData.REF_TYPE;
                     if (Ref_Type === undefined) {
                         Ref_Type = this.getView().byId("referencesType").getSelectedKey();
@@ -2475,7 +2583,25 @@ sap.ui.define([
                         var data = model.getData();
                         // var oModel = this.getView().setModel(model, 'lineItemModel');
 
+                        Object.keys(that.updatedData).forEach(function (rowno) {
+                            debugger;
+                            var newValue = that.updatedData[rowno];
+                            // Update the corresponding record in currentData
+                            var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                            if(record){
+                            if(parseInt(newValue) > record.MENGE){
+                                that.exceededQuantity = true;
+
+                            }else{
+                                record.MENGE = parseInt(newValue);
+                            }
+                        }
+                        });
+
+
+
                         this.getView().getModel('lineItemModel').setData(data);
+                        
                     } else if (Ref_Type === "GP" || Ref_Type === "OT" && !this.isPropertyPresent(arrayData, 'ITEM_NO')) {
                         var model = this.getView().getModel("GPDetailsModel");
                         var data = model.getData();
@@ -2487,69 +2613,114 @@ sap.ui.define([
                         var data = model.getData();
                         // var oModel = this.getView().setModel(model, 'lineItemModel');
 
+                        Object.keys(that.updatedData).forEach(function (rowno) {
+                            debugger;
+                            var newValue = that.updatedData[rowno];
+                            // Update the corresponding record in currentData
+                            var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                            if (record) {
+                                // Update the quantity field with newValue
+                               
+                               
+                                if(parseInt(newValue) > record.LAUFK){
+                                    that.exceededQuantity = true;
+
+                                }else{
+                                    record.LAUFK = parseInt(newValue);
+                                }
+                            }
+                        });
+
+
                         this.getView().getModel('lineItemModel').setData(data);
+                       
+                    }
+                    else if (Ref_Type === "SHIP"|| Ref_Type === "PO" && !this.isPropertyPresent(arrayData, 'QUANTITY')) {
+                        debugger;
+                        var model = this.getView().getModel("GPDetailsModel");
+                        var data = model.getData();
+                        // var oModel = this.getView().setModel(model, 'lineItemModel');
+
+                        Object.keys(that.updatedData).forEach(function (rowno) {
+                            debugger;
+                            var newValue = that.updatedData[rowno];
+                            // Update the corresponding record in currentData
+                            var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                            if (record) {
+                                // Update the quantity field with newValue
+                               
+                                
+                                if(parseInt(newValue) > record.QUANTITY){
+                                    that.exceededQuantity = true;
+
+                                }else{
+                                    record.QUANTITY = parseInt(newValue);
+                                }// Adjust quantityField with the actual field name in your model
+                               
+                            }
+                        });
+
+
+                        this.getView().getModel('lineItemModel').setData(data);
+                       
                     }
 
-                    // var oModel = this.getView().setModel(model, 'lineItemModel');
-
-                    // this.getView().getModel('lineItemModel').setData(arrayData);
+                    
 
                 }
                 console.log(gpCreationData);
 
+                // var selectedKey = this.getView().byId("referencesType").getSelectedKey();
+
+                // if (selectedKey == 'PO' || selectedKey == 'SHIP') {
+                //     debugger;
+                //     // var oModel = this.getView().getModel("GPDetailsModel");
+                //     // if (!oModel) {
+                //     //     var oModel1 = this.getView().getModel("lineItemModel");
+                //     //     var currentData = oModel1.getData();
+                //     // } else {
+                //     //     var currentData = oModel.getData();
+                //     // }
+
+                //     Object.keys(that.updatedData).forEach(function (rowno) {
+                //         debugger;
+                //         var newValue = that.updatedData[rowno];
+                //         // Update the corresponding record in currentData
+                //         var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                //         if (record) {
+                //             // Update the quantity field with newValue
+                //             if (selectedKey == 'PO' && oModel) {
+                //                 record.MENGE = parseInt(newValue); // Adjust quantityField with the actual field name in your model
+                //             } else if (selectedKey == 'PO' && model) {
+                //                 record.QUANTITY = parseInt(newValue); // Adjust quantityField with the actual field name in your model
+                //             }
+                //             else if (selectedKey == 'SHIP' && oModel) {
+                //                 record.LAUFK = parseInt(newValue);
+                //             } else if (selectedKey == 'SHIP' && model) {
+                //                 record.QUANTITY = parseInt(newValue); // Adjust quantityField with the actual field name in your model
+                //             }
+                //         }
+                //     });
+
+                //     // Set the updated data back to the model
+                //     if(oModel){
+                //         oModel.setData(currentData);
+                //     }else if (model){
+                //         model.setData(currentData);
+                //     }
+                    
+                //     that.updatedData = {};
+                // }
+
+
 
                 var oTable = this.getView().byId("ItemData");
 
-                // Iterate through the items in the table and disable input fields
-                // var aItems = oTable.getItems();
+                
                 var aItems = oTable.getItems();
-                // var aVisibleData = []; // Array to store data from visible rows
+                
 
-
-
-
-
-
-
-                // // Loop through each visible row
-                // aItems.forEach(function (oRow) {
-                //     var oContext = oRow.getBindingContext("lineItemModel"); // Get the binding context of the row
-                //     var oRowData = oContext.getObject(); // Get the model data associated with the row
-                //     aVisibleData.push(oRowData); // Push the row data to the array
-                // });
-
-
-                // // var oLineItemModel = new sap.ui.model.json.JSONModel();
-                // // this.getView().setModel(oLineItemModel, "lineItemModel");
-
-                // // let selectedKey = this.getView().byId("referencesType").getSelectedKey();
-                // let docValue = this.getView().byId('gatepassNum').getValue();
-
-                // let oObject = {
-                //     // key: selectedKey,
-                //     Number: docValue
-                // }
-
-                // if (oObject.Number) {
-                //     datamanager.getGPDetails(oObject, function (response) {
-
-                //         debugger;
-                //         that.objPostData = JSON.parse(response.EvJson);
-                // var oModelGPDetails = new sap.ui.model.json.JSONModel(this.objPostData);
-                // this.getView().setModel(oModelGPDetails, "GPDetailsModel");
-
-
-                // var oItems = this.getView().getModel('GPDetailsModel').getData().items;
-
-                // var V = this.Validator();
-                // if(V === true){
-
-                // if (!oModel) {
-                //     var oModellineItem = new sap.ui.model.json.JSONModel(this.lineItem);
-                //     this.getView().setModel(oModellineItem, "lineItemModel1");
-                //     var oModel = this.getView().getModel("lineItemModel1");
-                // }
-
+                
                 var V = this.Validator();
                 if (V === true) {
 
@@ -2585,43 +2756,54 @@ sap.ui.define([
                         sap.m.MessageToast.show("Please fill in all fields.");
                     } else {
 
-
-                        var selectedKey = this.getView().byId("referencesType").getSelectedKey();
-
-                        if (selectedKey == 'PO' || selectedKey == 'SHIP') {
-                            debugger;
-                            var oModel = this.getView().getModel("GPDetailsModel");
-                            if (!oModel) {
-                                var oModel1 = this.getView().getModel("lineItemModel");
-                                var currentData = oModel1.getData();
-                            } else {
-                                var currentData = oModel.getData();
-                            }
-
-                            Object.keys(that.updatedData).forEach(function (rowno) {
-                                debugger;
-                                var newValue = that.updatedData[rowno];
-                                // Update the corresponding record in currentData
-                                var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
-                                if (record) {
-                                    // Update the quantity field with newValue
-                                    if (selectedKey == 'PO' && oModel1) {
-                                        record.MENGE = parseInt(newValue); // Adjust quantityField with the actual field name in your model
-                                    } else if (selectedKey == 'PO' && oModel) {
-                                        record.QUANTITY = parseInt(newValue); // Adjust quantityField with the actual field name in your model
-                                    }
-                                    else if (selectedKey == 'SHIP' && oModel1) {
-                                        record.LAUFK = parseInt(newValue);
-                                    } else if (selectedKey == 'SHIP' && oModel) {
-                                        record.QUANTITY = parseInt(newValue); // Adjust quantityField with the actual field name in your model
-                                    }
-                                }
-                            });
-
-                            // Set the updated data back to the model
-                            oModel.setData(currentData);
-                            that.updatedData = {};
+                        if (that.exceededQuantity == true) {
+                            sap.m.MessageToast.show("New value cannot be greater than the original quantity.");
+                            that.getView().setModel(null,"lineItemModel");
+                            return; // Stop the execution of the function
                         }
+
+
+                        // var selectedKey = this.getView().byId("referencesType").getSelectedKey();
+
+                        // if (selectedKey == 'PO' || selectedKey == 'SHIP') {
+                        //     debugger;
+                        //     // var oModel = this.getView().getModel("GPDetailsModel");
+                        //     // if (!oModel) {
+                        //     //     var oModel1 = this.getView().getModel("lineItemModel");
+                        //     //     var currentData = oModel1.getData();
+                        //     // } else {
+                        //     //     var currentData = oModel.getData();
+                        //     // }
+
+                        //     Object.keys(that.updatedData).forEach(function (rowno) {
+                        //         debugger;
+                        //         var newValue = that.updatedData[rowno];
+                        //         // Update the corresponding record in currentData
+                        //         var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                        //         if (record) {
+                        //             // Update the quantity field with newValue
+                        //             if (selectedKey == 'PO' && oModel) {
+                        //                 record.MENGE = parseInt(newValue); // Adjust quantityField with the actual field name in your model
+                        //             } else if (selectedKey == 'PO' && model) {
+                        //                 record.QUANTITY = parseInt(newValue); // Adjust quantityField with the actual field name in your model
+                        //             }
+                        //             else if (selectedKey == 'SHIP' && oModel) {
+                        //                 record.LAUFK = parseInt(newValue);
+                        //             } else if (selectedKey == 'SHIP' && model) {
+                        //                 record.QUANTITY = parseInt(newValue); // Adjust quantityField with the actual field name in your model
+                        //             }
+                        //         }
+                        //     });
+
+                        //     // Set the updated data back to the model
+                        //     if(oModel){
+                        //         oModel.setData(currentData);
+                        //     }else if (model){
+                        //         model.setData(currentData);
+                        //     }
+                            
+                        //     that.updatedData = {};
+                        // }
 
 
 
@@ -2676,32 +2858,7 @@ sap.ui.define([
                             });
 
                         }
-                        // else if (Ref_Type === "OT") {
-                        //     debugger;
-                        //     oItems.forEach(function (obj) {
-                        //         debugger;
-                        //         var objItem = {
-                        //             "REF_DOC": obj.input2,
-                        //             "MATERIAL_NO": obj.input3,
-                        //             "MATERIAL_DES": obj.input4,
-                        //             "QUANTITY": obj.input5,
-                        //             "UOM": obj.input6
-                        //         }
-
-                        //         that.objPostData.ITEMS.push(objItem);
-                        //     });
-
-                        //     oItems.length = 0;
-
-                        //     // Set the modified data back to the model
-                        //     oModel.setData(oItems);
-                        //     oModel.refresh(true);
-
-
-                        // }
-
-
-                        // this.getView().getModel('lineItemModel').refresh(true);
+                        
                         var console1 = 0;
                         if (this.isEditMode === true && (Ref_Type === "OT" || Ref_Type === "PO" || Ref_Type === "SHIP")) {
                             MessageToast.show("Please Save the Table records!");
@@ -2713,6 +2870,7 @@ sap.ui.define([
                             }, function (error) {
                                 console.log(error);
                             });
+                            that.updatedData = {};
                             this.getView().setModel(null, "lineItemModel");
                             this.onAction();
                             this.isEditMode = '';
