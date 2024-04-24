@@ -177,10 +177,10 @@
                                                     text="Shipment"
                                                     key="SHIP"
                                                 />
-                                                <!-- <core:Item
-                                                    text="STO"
-                                                    key="STO"
-                                                /> -->
+                                                <core:Item
+                                                    text="Ship Delivery Doc"
+                                                    key="SDC"
+                                                />
                                                 <core:Item
                                                     text="GatePass"
                                                     key="GP"

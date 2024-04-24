@@ -9,7 +9,6 @@
         confirm="selectRefDoc"
         liveChange="_ParentValueHelpSearch"
         cancel="handleClose"
-        items="{/ITEMS}"
         id='refdoc'
 
         

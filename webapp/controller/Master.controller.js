@@ -190,6 +190,7 @@ sap.ui.define([
                 var oItem = oEvent.getParameter("listItem");
                 var oModel = this.getView().getModel("lineItemModel");
                 let selectedKey = this.getView().byId("referencesType").getSelectedKey();
+                this.isEditMode = false;
 
                 if (oModel === undefined) {
                     // Handle the scenario where lineItemModel doesn't exist
@@ -208,7 +209,7 @@ sap.ui.define([
                     var oContext = oItem.getBindingContext("lineItemModel");
                 }
 
-                if (oItem && selectedKey === "OT" || oItem && selectedKey === "PO" || oItem && selectedKey === "SHIP") {
+                if (oItem && selectedKey === "OT" || oItem && selectedKey === "PO" || oItem && selectedKey === "SHIP" || oItem && selectedKey === "SDC") {
                     // Get the binding context of the item
 
 
@@ -294,13 +295,16 @@ sap.ui.define([
                 this.getView().byId("checkInTime").setValue("");
                 this.getView().byId("checkOutDate").setValue("");
                 this.getView().byId("checkOutTime").setValue("");
-                // this.getView().byId("GPType").setValue("");
+                // var oSelect = this.getView().byId("GPType");
+                // var oItem = oSelect.getItemByKey("Inward");
+                // oSelect.setSelectedItem(oItem);
                 this.getView().byId("GPType").setEditable(true);
                 this.getView().byId("btnChkOut").setVisible(false);
                 this.getView().byId("DATEIN").setValue("");
                 this.getView().byId("DATEOUT").setValue("");
                 this.getView().byId("TIMEIN").setValue("");
                 this.getView().byId("TIMEOUT").setValue("");
+                this.getView().byId("REASON_MT").setValue("");
                 var form = this.getView().byId("FormChangeColumn_oneGroup235");
                 var btnMT = this.getView().byId("manualTracking");
 
@@ -558,10 +562,15 @@ sap.ui.define([
 
                         Key: 'OT'
                     }
+                } else if (selectedKey === 'SDC') {
+                    var object = {
+
+                        Key: 'SDC'
+                    }
                 }
 
 
-                if (object.Key == 'SHIP' || object.Key == 'PO' || object.Key == 'GP') {
+                if (object.Key == 'SHIP' || object.Key == 'PO' || object.Key == 'GP' || object.Key == 'SDC') {
 
 
                     datamanager.getF4HelpData(object, function (response) {
@@ -689,6 +698,44 @@ sap.ui.define([
 
                                 that.newRefdocDialog3.attachConfirm(that.onConfirm, that);
                                 that.newRefdocDialog3.open();
+                            } if (selectedKey === 'SDC') {
+                                that.lineItem.ITEMS = JSON.parse(response.Value);
+                                console.log(that.lineItem.ITEMS);
+
+                                if (that.newRefdocDialog4) {
+                                    that.newRefdocDialog4.destroy();
+                                    that.newRefdocDialog4 = null;
+                                }
+
+                                if (!that.newRefdocDialog4) {
+
+                                    that.newRefdocDialog4 = sap.ui.xmlfragment(field, "gatepass.gatepass.fragments.Referencedoc", that);
+                                    // console.log(this.newRefdocDialog1);
+                                    var oModel = new sap.ui.model.json.JSONModel(that.lineItem);
+                                    //oModel.setData(arrF4Data);
+                                    that.newRefdocDialog4.setModel(oModel, 'oModel');
+                                    // var oModel1 = this.newRefdocDialog1.getModel('oModel');
+
+                                    that.getView().addDependent(that.newRefdocDialog4); //addDependent to access the model in fragment
+                                    that.newRefdocDialog4.bindAggregation("items", {
+                                        path: "oModel>/ITEMS",
+                                        template: new sap.m.StandardListItem({
+                                            title: "Delivery Document Number",
+                                            description: "{oModel>VBELN}"
+                                        })
+
+                                    });
+
+
+                                } else {
+                                    that.newRefdocDialog4.sId = field;
+                                    that.newRefdocDialog4.getModel().refresh(true);
+                                }
+
+                                that.newRefdocDialog4.attachConfirm(that.onConfirm, that);
+                                that.newRefdocDialog4.open();
+
+
                             }
 
 
@@ -1044,7 +1091,7 @@ sap.ui.define([
                         that.getView().byId("checkInTime").setValue(sCheckInTime);
                         that.getView().byId("checkOutDate").setValue(sCheckOutDate);
                         that.getView().byId("checkOutTime").setValue(sCheckOutTime);
-                        that.getView().byId("GPType").setValue(sGPType);
+                        that.getView().byId("GPType").setSelectedKey(sGPType);
                         that.getView().byId("GPType").setEditable(false);
                         that.getView().byId("DATEIN").setValue(sDateIn);
                         that.getView().byId("TIMEIN").setValue(sTimeIn);
@@ -1094,6 +1141,12 @@ sap.ui.define([
                         debugger;
                         if(response.EvJson == "[]"){
                             MessageToast.show("No Data Available");
+                            var model = that.getView().getModel("lineItemModel");
+                            if(model){
+                                that.getView().setModel(null, "lineItemModel");
+                            }
+                            
+                            return;
                         }
 
                         that.lineItem.ITEMS = JSON.parse(response.EvJson);
@@ -1187,6 +1240,22 @@ sap.ui.define([
                                 })
                             })
 
+                        } else if (selectedKey === 'SDC') {
+                            debugger;
+                            oTable.bindItems({
+                                path: 'lineItemModel>/ITEMS',
+                                template: new sap.m.ColumnListItem({
+                                    cells: [
+                                        new sap.m.Text({ text: "{lineItemModel>POSNR}", id: that.createId(uniqueId + "POSNR") }),
+                                        new sap.m.Text({ text: "{lineItemModel>VBELN}", id: that.createId(uniqueId + "VBELN") }),
+                                        new sap.m.Text({ text: "{lineItemModel>MATNR}", id: that.createId(uniqueId + "MATNR") }),
+                                        new sap.m.Text({ text: "{lineItemModel>ARKTX}", id: that.createId(uniqueId + "ARKTX") }),
+                                        new sap.m.Text({ text: "{lineItemModel>LFIMG}", id: that.createId(uniqueId + "LFIMG") }),
+                                        new sap.m.Text({ text: "{lineItemModel>MEINS}", id: that.createId(uniqueId + "MEINS") })
+                                    ]
+                                })
+                            })
+
                         }
 
                         //var itemData = JSON.parse(response.EvJsonItems);
@@ -1261,6 +1330,10 @@ sap.ui.define([
                                         gpDataModel.setProperty("/REF_TYPE", "OT");
                                         suppNo.setRequired(false);
                                         break;
+                                    case "SDC":
+                                        gpDataModel.setProperty("/REF_TYPE", "SDC");
+                                        suppNo.setRequired(false);
+                                        break;
                                     default:
                                         console.warn("Unexpected selected key:", selectedKey);
                                         // Handle other cases or do nothing
@@ -1331,6 +1404,10 @@ sap.ui.define([
                                         break;
                                     case "OT":
                                         gpDataModel.setProperty("/REF_TYPE", "OT");
+                                        suppNo.setRequired(false);
+                                        break;
+                                    case "SDC":
+                                        gpDataModel.setProperty("/REF_TYPE", "SDC");
                                         suppNo.setRequired(false);
                                         break;
                                     default:
@@ -1536,7 +1613,7 @@ sap.ui.define([
                 debugger;
                 var that = this;
                 let selectedKey = this.getView().byId("referencesType").getSelectedKey();
-                if (selectedKey == 'OT' || selectedKey == 'PO' || selectedKey == 'SHIP') {
+                if (selectedKey == 'OT' || selectedKey == 'PO' || selectedKey == 'SHIP' || selectedKey == 'SDC') {
                     var oTable = this.getView().byId("ItemData");
                     var aItems = oTable.getItems();
                     aItems.forEach(function (oItem) {
@@ -1545,9 +1622,9 @@ sap.ui.define([
                         oItem.getCells().forEach(function (oCell) {
                             if (oCell instanceof sap.m.Text) {
                                 debugger;
-                                if (selectedKey == 'PO' || selectedKey == 'SHIP') {
+                                if (selectedKey == 'PO' || selectedKey == 'SHIP' || selectedKey == 'SDC') {
                                     var result = oCell.sId;
-                                    if (result.includes('MENGE') || result.includes('LAUFK')) {
+                                    if (result.includes('MENGE') || result.includes('LAUFK') || result.includes('LFIMG')) {
                                         Toast = true;
                                     }
                                 } else if (selectedKey == 'OT') {
@@ -1660,7 +1737,7 @@ sap.ui.define([
                         // });
 
 
-                    } else if (selectedKey == 'PO' || selectedKey == 'SHIP') {
+                    } else if (selectedKey == 'PO' || selectedKey == 'SHIP' || selectedKey == 'SDC') {
                         // For 'PO' and 'SHIP' cases, make only the quantity field editable
                         if (oQuantityCell instanceof sap.m.Text) {
                             var oInput = new sap.m.Input({
@@ -1892,9 +1969,12 @@ sap.ui.define([
                 //var gpCreationData = this.getView().getModel('gpData').oData;
                 console.log(this.getView().getModel('gpData').getData());
                 this.getView().getModel('gpData').refresh(true);
+                let selected = this.getView().byId("GPType").getSelectedKey();
+
                 var gpCreationData = this.getView().getModel('gpData').getData();
                 console.log(gpCreationData);
                 this.objPostData = gpCreationData;
+                this.objPostData.GP_Type = selected;
 
                 if (this.hide === false) {
                     var currentDate = new Date();
@@ -2015,7 +2095,7 @@ sap.ui.define([
 
                             // Iterate over each entry in newData
                             var selectedKey = this.getView().byId("referencesType").getSelectedKey();
-                            if (selectedKey == 'PO' || selectedKey == 'SHIP') {
+                            if (selectedKey == 'PO' || selectedKey == 'SHIP' || selectedKey == 'SDC') {
                                 Object.keys(that.updatedData).forEach(function (rowno) {
                                     debugger;
                                     var newValue = that.updatedData[rowno];
@@ -2036,6 +2116,14 @@ sap.ui.define([
                                                 that.exceed =true; 
                                              }else{
                                                  record.LAUFK = parseInt(newValue);
+                                             }
+                                            
+                                        } else if (selectedKey == 'SDC') {
+
+                                            if(parseInt(newValue) > record.LFIMG ){
+                                                that.exceed =true; 
+                                             }else{
+                                                 record.LFIMG = parseInt(newValue);
                                              }
                                             
                                         }
@@ -2102,26 +2190,26 @@ sap.ui.define([
                                         });
 
                                     }
-                                    // else if (Ref_Type === "OT") {
-                                    //     debugger;
-                                    //     oItems.forEach(function (obj) {
-                                    //         debugger;
-                                    //         var objItem = {
-                                    //             "REF_DOC": obj.input2,
-                                    //             "MATERIAL_NO": obj.input3,
-                                    //             "MATERIAL_DES": obj.input4,
-                                    //             "QUANTITY": obj.input5,
-                                    //             "UOM": obj.input6
-                                    //         }
+                                    else if (Ref_Type === "SDC") {
+                                        debugger;
+                                        oItems.forEach(function (obj) {
+                                            debugger;
+                                            var objItem = {
+                                                "REF_DOC": obj.VBELN,
+                                                "MATERIAL_NO": obj.MATNR,
+                                                "MATERIAL_DES": obj.ARKTX,
+                                                "QUANTITY": obj.LFIMG,
+                                                "UOM": obj.MEINS
+                                            }
 
-                                    //         that.objPostData.ITEMS.push(objItem);
-                                    //     });
-                                    // }
+                                            that.objPostData.ITEMS.push(objItem);
+                                        });
+                                    }
                                     if (this.editable === true) {
                                         MessageToast.show("Please Edit your Gatepass!")
 
                                     } else {
-                                        if (this.isEditMode === true && (Ref_Type === "OT" || Ref_Type === "PO" || Ref_Type === "SHIP")) {
+                                        if (this.isEditMode === true && (Ref_Type === "OT" || Ref_Type === "PO" || Ref_Type === "SHIP" || Ref_Type === "SDC")) {
                                             MessageToast.show("Please Save the Table records!");
                                         } else if (this.hide === false) {
 
@@ -2442,6 +2530,58 @@ sap.ui.define([
                             oItem.DTMEG = sNewValue;
                             break;
                     }
+                } else if (selectedKey === 'SDC') {
+                    switch (iColumnIndex) {
+                        case 1:
+                            oItem.VBELN = sNewValue;
+                            break;
+                        case 2:
+                            oItem.MATNR = sNewValue;
+                            break;
+                        case 3:
+                            oItem.ARKTX = sNewValue;
+                            break;
+                        case 4:
+
+                            var table = this.getView().byId("ItemData");
+                            var rows = table.getItems();
+                            // var oModel = this.getView().getModel("lineItemModel");
+                            var oItem = oModel.getProperty(sPath);
+                            var that = this;
+
+                            rows.forEach(function (row) {
+                                debugger;
+                                var cells = row.getCells();
+                                var ro = row.sId;
+                                var rowCount = ro.charAt(ro.length - 1);
+                                var path = sPath.charAt(sPath.length - 1);
+                                if (rowCount == path) {
+                                    cells.forEach(function (cell) {
+                                        debugger;
+                                        // if(cell.mProperties.text == sPath.charAt(sPath.length - 1)){
+                                        if (cell instanceof sap.m.Input) { // Check if the cell is an input field
+                                            if (sModelName == 'GPDetailsModel') {
+                                                var originalValue = oItem.QUANTITY;
+                                            } else if (sModelName == 'lineItemModel') {
+                                                var originalValue = oItem.LFIMG;
+                                            }
+                                            var newValue = cell.getValue()
+
+                                            that.validateInput(cell, newValue, originalValue);
+                                            that.updateDataLocally(path, newValue);
+
+
+                                        }
+
+                                    });
+                                }
+                            });
+                            // oItem.LAUFK = sNewValue;
+                            break;
+                        case 5:
+                            oItem.MEINS = sNewValue;
+                            break;
+                    }
                 }
 
                 // Set the updated array back to the model
@@ -2515,6 +2655,9 @@ sap.ui.define([
                 }
                 var gpCreationData = this.getView().getModel('gpData').getData();
                 this.objPostData = gpCreationData;
+                let selected = this.getView().byId("GPType").getSelectedKey();
+                
+                this.objPostData.GP_Type = selected;
                 var oModel = this.getView().getModel('lineItemModel');
                 debugger;
                 if (!oModel) {
@@ -2578,8 +2721,34 @@ sap.ui.define([
 
                         this.getView().getModel('lineItemModel').setData(data);
                         
+                    } else if (Ref_Type === "SDC" && this.isPropertyPresent(arrayData, 'VBELN')) {
+                        // var model = this.getView().getModel("GPDetailsModel");
+                        // var data = model.getData();
+                        // var oModel = this.getView().setModel(model, 'lineItemModel');
+
+                        Object.keys(that.updatedData).forEach(function (rowno) {
+                            debugger;
+                            var newValue = that.updatedData[rowno];
+                            // Update the corresponding record in currentData
+                            var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                            if (record) {
+                                // Update the quantity field with newValue
+                               
+                                if(parseInt(newValue) > record.LFIMG){
+                                    that.exceededQuantity = true;
+
+                                }else{
+                                    record.LFIMG = parseInt(newValue);
+                                }
+                            }
+                                    
+                        });
+
+
+                        this.getView().getModel('lineItemModel').setData(data);
+                        
                     }
-                    else if (Ref_Type === "SHIP"|| Ref_Type === "PO" && this.isPropertyPresent(arrayData, 'QUANTITY')) {
+                    else if (Ref_Type === "SHIP"|| Ref_Type === "PO" || Ref_Type === "SDC" && this.isPropertyPresent(arrayData, 'QUANTITY')) {
                         debugger;
                         // var model = this.getView().getModel("GPDetailsModel");
                         // var data = model.getData();
@@ -2678,8 +2847,34 @@ sap.ui.define([
 
                         this.getView().getModel('lineItemModel').setData(data);
                        
+                    } else if (Ref_Type === "SDC" && !this.isPropertyPresent(arrayData, 'VBELN')) {
+                        var model = this.getView().getModel("GPDetailsModel");
+                        var data = model.getData();
+                        // var oModel = this.getView().setModel(model, 'lineItemModel');
+
+                        Object.keys(that.updatedData).forEach(function (rowno) {
+                            debugger;
+                            var newValue = that.updatedData[rowno];
+                            // Update the corresponding record in currentData
+                            var record = currentData['ITEMS'][rowno]; // Assuming rowno is the key for each record
+                            if (record) {
+                                // Update the quantity field with newValue
+                               
+                               
+                                if(parseInt(newValue) > record.LFIMG){
+                                    that.exceededQuantity = true;
+
+                                }else{
+                                    record.LFIMG = parseInt(newValue);
+                                }
+                            }
+                        });
+
+
+                        this.getView().getModel('lineItemModel').setData(data);
+                       
                     }
-                    else if (Ref_Type === "SHIP"|| Ref_Type === "PO" && !this.isPropertyPresent(arrayData, 'QUANTITY')) {
+                    else if (Ref_Type === "SHIP"|| Ref_Type === "PO" || Ref_Type === "SDC" && !this.isPropertyPresent(arrayData, 'QUANTITY')) {
                         debugger;
                         var model = this.getView().getModel("GPDetailsModel");
                         var data = model.getData();
@@ -2884,7 +3079,26 @@ sap.ui.define([
 
 
 
-                        } else if (Ref_Type === "GP" || Ref_Type === "OT" || Ref_Type === "PO" || Ref_Type === "SHIP") {
+                        } else if (Ref_Type === "SDC" && this.check == 0) {
+
+                            oItems.forEach(function (obj) {
+                                var objItem = {
+                                    "ITEM_NO": obj.POSNR,
+                                    "REF_DOC": obj.VBELN,
+                                    "MATERIAL_NO": obj.MATNR,
+                                    "MATERIAL_DES": obj.ARKTX,
+                                    "QUANTITY": obj.LFIMG,
+                                    "UOM": obj.MEINS
+                                }
+
+                                that.objPostData.ITEMS.push(objItem);
+
+                            });
+
+
+
+                        } 
+                        else if (Ref_Type === "GP" || Ref_Type === "OT" || Ref_Type === "PO" || Ref_Type === "SHIP" || Ref_Type === "SDC") {
                             debugger;
 
                             oItems.forEach(function (obj) {
@@ -2904,8 +3118,9 @@ sap.ui.define([
                         }
                         
                         var console1 = 0;
-                        if (this.isEditMode === true && (Ref_Type === "OT" || Ref_Type === "PO" || Ref_Type === "SHIP")) {
+                        if (this.isEditMode === true && (Ref_Type === "OT" || Ref_Type === "PO" || Ref_Type === "SHIP" || Ref_Type === "SDC")) {
                             MessageToast.show("Please Save the Table records!");
+                            return;
                         } else {
                             debugger;
                             datamanager.updateData(that.objPostData, function (success) {
@@ -2935,6 +3150,7 @@ sap.ui.define([
 
                             var oTable = this.getView().byId("ItemData");
                             // oTable.setModel(GPDetailsModel1, "lineItemModel");
+                            if (Ref_Type === "OT"){
                             var oTemplate = new sap.m.ColumnListItem({
                                 cells: [
                                     new sap.m.Input({ value: "{lineItemModel>ITEM_NO}", enabled: true }), // Replace "ITEM_NO" with your actual property names
@@ -2945,6 +3161,18 @@ sap.ui.define([
                                     new sap.m.Input({ value: "{lineItemModel>UOM}", enabled: true }),
                                 ]
                             });
+                        } else{
+                            var oTemplate = new sap.m.ColumnListItem({
+                                cells: [
+                                    new sap.m.Input({ value: "{lineItemModel>ITEM_NO}", enabled: false }), // Replace "ITEM_NO" with your actual property names
+                                    new sap.m.Input({ value: "{lineItemModel>REF_DOC}", enabled: false }),
+                                    new sap.m.Input({ value: "{lineItemModel>MATERIAL_NO}", enabled: false }),
+                                    new sap.m.Input({ value: "{lineItemModel>MATERIAL_DES}", enabled: false }), // Replace "ITEM_NO" with your actual property names
+                                    new sap.m.Input({ value: "{lineItemModel>QUANTITY}", enabled: true }),
+                                    new sap.m.Input({ value: "{lineItemModel>UOM}", enabled: false }),
+                                ]
+                            });
+                        }
 
                             oTable.bindItems({
                                 path: "lineItemModel>/ITEMS",
