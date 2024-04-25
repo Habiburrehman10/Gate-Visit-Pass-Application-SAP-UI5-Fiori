@@ -213,11 +213,21 @@ sap.ui.define([
                             reader.onloadend = function () {
                                 var compressedImageDataUrl = reader.result;
                                 this.Img = compressedImageDataUrl;
-
-                                // Do something with the compressed image data URL
+                                var oImage = this.getView().byId("img");
+                                oImage.mProperties.src = '';
+        
+                                var ModelImg = this.getView().getModel("ImageModel");
+                                ModelImg.setProperty("/VISITOR_IMG", this.Img);
+                            
+        
+                                oImage.bindProperty("src", {
+                                    path: "/VISITOR_IMG",
+                                    model: "ImageModel"
+                                });
+                                
                                 console.log("Compressed image:", compressedImageDataUrl);
                                 MessageToast.show("Picture Captured");
-                                this.getView().getModel("ImageModel").setProperty("/VISITOR_IMG", this.Img);
+                                
 
                                 // Close the popup dialog
                                 this.onClose();
