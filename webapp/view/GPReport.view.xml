@@ -476,6 +476,14 @@
                             <Text text="{oModelGP>CHECKOUT_TIME}" />
                         </table:template>
                     </table:Column>
+                    <table:Column width = "100px">
+                        <table:label>
+                            <Label text="GatePass Type" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{oModelGP>GP_TYPE}" />
+                        </table:template>
+                    </table:Column>
                     <table:Column width="100px">
                         <table:label>
                             <Label text="Date In" />
